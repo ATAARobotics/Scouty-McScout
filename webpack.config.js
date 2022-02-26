@@ -21,8 +21,6 @@ module.exports = async function (env, argv) {
 	};
 
 	if (isEnvProduction) {
-		config.output.publicPath = "/Scouty-McScout-Static/";
-
 		config.plugins.push(
 			// Generate a service worker script that will precache, and keep up to date,
 			// the HTML & assets that are part of the webpack build.
