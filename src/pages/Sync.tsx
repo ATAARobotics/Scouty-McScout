@@ -16,6 +16,7 @@ const style = StyleSheet.create({
 
 interface HeaderProps {
 	done: () => void;
+	otherIps?: string[];
 }
 
 async function gatherInfo(): Promise<MatchInfo[]> {
@@ -36,7 +37,16 @@ async function updateInfo(info: MatchInfo[]): Promise<boolean> {
 	return true;
 }
 
-const API_ENDPOINT = "http://localhost:4421/api/";
+const API_ENDPOINTS = [
+	// Local
+	"http://localhost:4421/",
+	// Scouting Pi
+	"http://raspberry-mcpiface.lan:4421/",
+	"http://raspberry-mcpiface.local:4421/",
+	"http://192.168.4.10:4421/",
+	// Server McServerface
+	"http://autoscout.ben1jen.ca:4421/",
+];
 
 export default function Sync(props: HeaderProps): JSX.Element {
 	const [state, setState] = React.useState<
@@ -55,10 +65,14 @@ export default function Sync(props: HeaderProps): JSX.Element {
 			.then((data) => {
 				const encodedData = JSON.stringify(data);
 				setState("uploading");
-				return fetch(API_ENDPOINT + "push", {
-					method: "PUT",
-					body: encodedData,
-				});
+				return Promise.any(
+					API_ENDPOINTS.concat(props.otherIps ?? []).map((endpoint) =>
+						fetch(endpoint + "/api/push", {
+							method: "PUT",
+							body: encodedData,
+						}),
+					),
+				);
 			})
 			.then((response) => {
 				if (!response.ok || response.status !== 200) {
@@ -79,7 +93,11 @@ export default function Sync(props: HeaderProps): JSX.Element {
 					return;
 				}
 				setState("pulling");
-				return fetch(API_ENDPOINT + "pull");
+				return Promise.any(
+					API_ENDPOINTS.concat(props.otherIps ?? []).map((endpoint) =>
+						fetch(endpoint + "/api/pull"),
+					),
+				);
 			})
 			.then((response) => {
 				if (response === undefined) {
