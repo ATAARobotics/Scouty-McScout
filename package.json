@@ -7,7 +7,8 @@
 		"web": "expo start --web",
 		"eject": "expo eject",
 		"lint": "tsc --noEmit --pretty && eslint src/**/*.{ts,tsx}",
-		"fix": "prettier -w src/**/*.{ts,tsx} && eslint --fix src/**/*.{ts,tsx}"
+		"fix": "prettier -w src/**/*.{ts,tsx} && eslint --fix src/**/*.{ts,tsx}",
+		"build": "expo build:web"
 	},
 	"dependencies": {
 		"@expo/webpack-config": "^0.16.17",

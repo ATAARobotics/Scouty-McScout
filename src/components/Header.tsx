@@ -34,7 +34,6 @@ interface HeaderProps {
 export default function Header(props: HeaderProps): JSX.Element {
 	const [ip, setIp] = React.useState("");
 	React.useEffect(() => {
-		console.log("IP: ", ip);
 		if (ip === undefined) {
 			props.setIps([]);
 		} else {

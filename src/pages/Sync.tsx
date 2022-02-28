@@ -50,7 +50,6 @@ const API_ENDPOINTS = [
 ];
 
 export default function Sync(props: HeaderProps): JSX.Element {
-	console.log("other ips:", props.otherIps);
 	const [state, setState] = React.useState<
 		| "starting"
 		| "gathering"
@@ -72,70 +71,70 @@ export default function Sync(props: HeaderProps): JSX.Element {
 						fetch(endpoint.replace(/\/$/, "") + "/api/push", {
 							method: "PUT",
 							body: encodedData,
-						}),
+						})
+							.then((response) => {
+								if (!response.ok || response.status !== 200) {
+									setError(
+										"Push HTTP response bad with status " +
+											response.status.toString(),
+									);
+									return;
+								}
+								return response.json();
+							})
+							.then((response) => {
+								if (response === undefined) {
+									return;
+								}
+								if (!response.success) {
+									setError(
+										"Push failed with error: " + response.error,
+									);
+									return;
+								}
+								setState("pulling");
+								return fetch(endpoint.replace(/\/$/, "") + "/api/pull");
+							})
+							.then((response) => {
+								if (response === undefined) {
+									return;
+								}
+								if (!response.ok || response.status !== 200) {
+									setError(
+										"Pull HTTP response bad with status " +
+											response.status.toString(),
+									);
+									return;
+								}
+								return response.json();
+							})
+							.then((response) => {
+								if (response === undefined) {
+									return;
+								}
+								if (!response.success || !response.data) {
+									setError(
+										"Pull failed with error: " + response.error,
+									);
+									return;
+								}
+								return updateInfo(response.data);
+							})
+							.then((result) => {
+								if (result === false) {
+									setError("Updating new info failed.");
+									result = undefined;
+									return;
+								}
+								if (result === undefined) {
+									setState("failed");
+									return;
+								}
+								setState("done");
+								props.done();
+							}),
 					),
 				);
-			})
-			.then((response) => {
-				if (!response.ok || response.status !== 200) {
-					setError(
-						"Push HTTP response bad with status " +
-							response.status.toString(),
-					);
-					return;
-				}
-				return response.json();
-			})
-			.then((response) => {
-				if (response === undefined) {
-					return;
-				}
-				if (!response.success) {
-					setError("Push failed with error: " + response.error);
-					return;
-				}
-				setState("pulling");
-				return Promise.any(
-					API_ENDPOINTS.concat(props.otherIps ?? []).map((endpoint) =>
-						fetch(endpoint.replace(/\/$/, "") + "/api/pull"),
-					),
-				);
-			})
-			.then((response) => {
-				if (response === undefined) {
-					return;
-				}
-				if (!response.ok || response.status !== 200) {
-					setError(
-						"Pull HTTP response bad with status " +
-							response.status.toString(),
-					);
-					return;
-				}
-				return response.json();
-			})
-			.then((response) => {
-				if (response === undefined) {
-					return;
-				}
-				if (!response.success || !response.data) {
-					setError("Push failed with error: " + response.error);
-					return;
-				}
-				return updateInfo(response.data);
-			})
-			.then((result) => {
-				if (result === false) {
-					setError("Updating new info failed.");
-					result = undefined;
-					return;
-				}
-				if (result === undefined) {
-					setState("failed");
-					return;
-				}
-				setState("done");
-				props.done();
 			})
 			.catch((err) => {
 				console.error("Catch: ", err);
