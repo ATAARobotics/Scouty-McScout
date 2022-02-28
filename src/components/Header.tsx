@@ -28,10 +28,19 @@ export type PageState = "match" | "sync";
 
 interface HeaderProps {
 	setPage: (page: PageState) => void;
+	setIps: (ips: string[]) => void;
 }
 
 export default function Header(props: HeaderProps): JSX.Element {
-	const [ip, setIp] = React.useState<string>();
+	const [ip, setIp] = React.useState("");
+	React.useEffect(() => {
+		console.log("IP: ", ip);
+		if (ip === undefined) {
+			props.setIps([]);
+		} else {
+			props.setIps([ip]);
+		}
+	}, [ip]);
 	return (
 		<View style={style.main}>
 			<Image source={require("../../assets/ataa.png")} style={style.image} />

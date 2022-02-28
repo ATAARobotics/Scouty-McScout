@@ -46,9 +46,11 @@ const API_ENDPOINTS = [
 	"http://192.168.4.10:4421/",
 	// Server McServerface
 	"http://autoscout.ben1jen.ca:4421/",
+	"https://autoscout.ben1jen.ca:4431/",
 ];
 
 export default function Sync(props: HeaderProps): JSX.Element {
+	console.log("other ips:", props.otherIps);
 	const [state, setState] = React.useState<
 		| "starting"
 		| "gathering"
@@ -67,7 +69,7 @@ export default function Sync(props: HeaderProps): JSX.Element {
 				setState("uploading");
 				return Promise.any(
 					API_ENDPOINTS.concat(props.otherIps ?? []).map((endpoint) =>
-						fetch(endpoint + "/api/push", {
+						fetch(endpoint.replace(/\/$/, "") + "/api/push", {
 							method: "PUT",
 							body: encodedData,
 						}),
@@ -95,7 +97,7 @@ export default function Sync(props: HeaderProps): JSX.Element {
 				setState("pulling");
 				return Promise.any(
 					API_ENDPOINTS.concat(props.otherIps ?? []).map((endpoint) =>
-						fetch(endpoint + "/api/pull"),
+						fetch(endpoint.replace(/\/$/, "") + "/api/pull"),
 					),
 				);
 			})
