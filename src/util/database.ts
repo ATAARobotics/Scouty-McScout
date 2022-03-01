@@ -31,7 +31,7 @@ export interface MatchInfo {
 	};
 	speed: number | undefined;
 	stability: number | undefined;
-	defense: number | undefined;
+	defence: number | undefined;
 	isPrimaryDefence: boolean;
 	wasBroken: boolean;
 	wasDisabled: boolean;

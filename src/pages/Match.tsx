@@ -65,7 +65,7 @@ const defaultState: MatchInfo = {
 	},
 	speed: undefined,
 	stability: undefined,
-	defense: undefined,
+	defence: undefined,
 	isPrimaryDefence: false,
 	wasDisabled: false,
 	wasBroken: false,
@@ -306,15 +306,15 @@ export default function Match(): JSX.Element {
 					label="Stability"
 				/>
 				<Choice
-					setState={(s) => setState({ ...state, defense: s })}
-					state={state.defense}
+					setState={(s) => setState({ ...state, defence: s })}
+					state={state.defence}
 					options={["1", "2", "3", "4", "5"]}
-					label="Defense"
+					label="Defence"
 				/>
 				<Switch
 					setState={(s) => setState({ ...state, isPrimaryDefence: s })}
 					state={state.isPrimaryDefence}
-					label="Primary Defense Bot?"
+					label="Primary Defence Bot?"
 				/>
 				<Switch
 					setState={(s) => setState({ ...state, wasBroken: s })}
