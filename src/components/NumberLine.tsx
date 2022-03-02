@@ -37,6 +37,7 @@ export default function NumberLine(props: NumberLineProps): JSX.Element {
 			<Text style={style.label}>{props.label}</Text>
 			<TextInput
 				style={style.text}
+				keyboardType="numeric"
 				onChangeText={(value) => {
 					if (value === "") {
 						if (props.setState) {

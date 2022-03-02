@@ -38,15 +38,14 @@ async function updateInfo(info: MatchInfo[]): Promise<boolean> {
 }
 
 const API_ENDPOINTS = [
-	// Local
-	"http://localhost:4421/",
-	// Scouting Pi
-	"http://raspberry-mcpiface.lan:4421/",
-	"http://raspberry-mcpiface.local:4421/",
-	"http://192.168.4.10:4421/",
 	// Server McServerface
 	"https://autoscout.ben1jen.ca:4431/",
 	"http://autoscout.ben1jen.ca:4421/",
+	// Scouting Pi
+	"http://raspberry-mcpiface.lan:4421/",
+	"http://raspberry-mcpiface.local:4421/",
+	// Local
+	"http://localhost:4421/",
 ];
 
 export default function Sync(props: HeaderProps): JSX.Element {
@@ -74,7 +73,7 @@ export default function Sync(props: HeaderProps): JSX.Element {
 						})
 							.then((response) => {
 								if (!response.ok || response.status !== 200) {
-									setError(
+									throw new Error(
 										"Push HTTP response bad with status " +
 											response.status.toString(),
 									);
@@ -84,51 +83,45 @@ export default function Sync(props: HeaderProps): JSX.Element {
 							})
 							.then((response) => {
 								if (response === undefined) {
-									return;
+									throw new Error("Empty Response");
 								}
 								if (!response.success) {
-									setError(
+									throw new Error(
 										"Push failed with error: " + response.error,
 									);
-									return;
 								}
 								setState("pulling");
 								return fetch(endpoint.replace(/\/$/, "") + "/api/pull");
 							})
 							.then((response) => {
 								if (response === undefined) {
-									return;
+									throw new Error("Empty Response");
 								}
 								if (!response.ok || response.status !== 200) {
-									setError(
+									throw new Error(
 										"Pull HTTP response bad with status " +
 											response.status.toString(),
 									);
-									return;
 								}
 								return response.json();
 							})
 							.then((response) => {
 								if (response === undefined) {
-									return;
+									throw new Error("Empty Response");
 								}
 								if (!response.success || !response.data) {
-									setError(
+									throw new Error(
 										"Pull failed with error: " + response.error,
 									);
-									return;
 								}
 								return updateInfo(response.data);
 							})
 							.then((result) => {
 								if (result === false) {
-									setError("Updating new info failed.");
-									result = undefined;
-									return;
+									throw new Error("Updating new info failed.");
 								}
 								if (result === undefined) {
-									setState("failed");
-									return;
+									throw new Error("failed");
 								}
 								setState("done");
 								props.done();
@@ -137,8 +130,7 @@ export default function Sync(props: HeaderProps): JSX.Element {
 				);
 			})
 			.catch((err) => {
-				console.error("Catch: ", err);
-				setError(err.message);
+				setError(err.errors.join("\n"));
 				setState("failed");
 			});
 	}, []);

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type MatchType = "qualification" | "practice";
+export type MatchType = "qualification" | "practice";
 
 export type ClimbLevel = 0 | 1 | 2 | 3 | 4;
 
@@ -120,3 +120,11 @@ export async function readMatch(
 // 	return undefined as any as RobotInfo;
 // 	// return db.get(["match_info", team]);
 // }
+
+/**
+ * Clears all local data
+ */
+
+export async function clearData(): Promise<void> {
+	await AsyncStorage.clear();
+}

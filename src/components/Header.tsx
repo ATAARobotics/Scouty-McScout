@@ -1,6 +1,8 @@
 import React from "react";
 import { Image, Button, View, StyleSheet, TextInput } from "react-native";
 
+import { clearData } from "../util/database";
+
 const style = StyleSheet.create({
 	main: {
 		flex: 1,
@@ -14,13 +16,11 @@ const style = StyleSheet.create({
 	},
 	text: {
 		color: "#ffffff",
-		width: 240,
-		height: 24,
+		width: 200,
 		borderRadius: 6,
 		borderStyle: "solid",
 		borderWidth: 2,
 		borderColor: "#ffffff",
-		margin: 50,
 	},
 });
 
@@ -34,7 +34,7 @@ interface HeaderProps {
 export default function Header(props: HeaderProps): JSX.Element {
 	const [ip, setIp] = React.useState("");
 	React.useEffect(() => {
-		if (ip === undefined) {
+		if (ip === undefined || ip === "") {
 			props.setIps([]);
 		} else {
 			props.setIps([ip]);
@@ -53,6 +53,17 @@ export default function Header(props: HeaderProps): JSX.Element {
 				onChangeText={setIp}
 				placeholder="Other server IP"
 			></TextInput>
+			<Button
+				color="#ff0000"
+				title="Clear Data (local)"
+				onPress={() => {
+					if (confirm("Are you sure you want to clear ALL local data?")) {
+						clearData();
+					}
+				}}
+			>
+				Clear All Data
+			</Button>
 		</View>
 	);
 }

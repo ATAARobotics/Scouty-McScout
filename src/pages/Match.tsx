@@ -335,9 +335,12 @@ export default function Match(): JSX.Element {
 			<Button
 				title="Save"
 				onPress={() =>
-					writeMatch(state).then((success) =>
-						console.log("Wrote the match: ", success),
-					)
+					writeMatch(state).then((success) => {
+						console.log("Wrote the match: ", success);
+						setMatchNumber(undefined);
+						setTeamNumber(undefined);
+						alert("Saved.");
+					})
 				}
 			/>
 			<Text style={style.header}></Text>
