@@ -6,21 +6,23 @@ export type ClimbLevel = 0 | 1 | 2 | 3 | 4;
 
 export interface MatchInfo {
 	type: "match_info";
-	match: number | undefined;
-	matchCategory: MatchType | undefined;
-	team: number | undefined;
+	match: number;
+	matchCategory: MatchType;
+	team: number;
 	auto: {
 		exitedTarmac: boolean;
-		startingLocation: "left" | "middle" | "right" | undefined;
+		startingLocation: "left" | "middle" | "right";
 		cellsAcquired: number;
-		cellsDropped: number;
+		lowGoalAttempts: number;
 		lowGoalShots: number;
+		highGoalAttempts: number;
 		highGoalShots: number;
 	};
 	teleop: {
 		cellsAcquired: number;
-		cellsDropped: number;
+		lowGoalAttempts: number;
 		lowGoalShots: number;
+		highGoalAttempts: number;
 		highGoalShots: number;
 	};
 	climb: {
@@ -29,8 +31,8 @@ export interface MatchInfo {
 		highestScored: ClimbLevel;
 		fell: boolean;
 	};
-	speed: number | undefined;
-	stability: number | undefined;
+	speed: number;
+	stability: number;
 	defence: number | undefined;
 	isPrimaryDefence: boolean;
 	wasBroken: boolean;

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import NumberLine from "../components/NumberLine";
 import TextBox from "../components/TextBox";
 import Choice from "../components/Choice";
@@ -33,6 +33,10 @@ const style = StyleSheet.create({
 		borderTopColor: "#e6e6e6",
 		color: "#ffffff",
 	},
+	text: {
+		fontSize: 24,
+		color: "#ffffff",
+	},
 });
 
 /**
@@ -40,21 +44,23 @@ const style = StyleSheet.create({
  */
 const defaultState: MatchInfo = {
 	type: "match_info",
-	match: undefined,
-	matchCategory: undefined,
-	team: undefined,
+	match: 0,
+	matchCategory: "qualification",
+	team: 0,
 	auto: {
 		exitedTarmac: false,
-		startingLocation: undefined,
+		startingLocation: "middle",
 		cellsAcquired: 0,
-		cellsDropped: 0,
+		lowGoalAttempts: 0,
 		lowGoalShots: 0,
+		highGoalAttempts: 0,
 		highGoalShots: 0,
 	},
 	teleop: {
 		cellsAcquired: 0,
-		cellsDropped: 0,
+		lowGoalAttempts: 0,
 		lowGoalShots: 0,
+		highGoalAttempts: 0,
 		highGoalShots: 0,
 	},
 	climb: {
@@ -63,8 +69,8 @@ const defaultState: MatchInfo = {
 		highestScored: 0,
 		fell: false,
 	},
-	speed: undefined,
-	stability: undefined,
+	speed: 2,
+	stability: 2,
 	defence: undefined,
 	isPrimaryDefence: false,
 	wasDisabled: false,
@@ -104,10 +110,25 @@ export default function Match(): JSX.Element {
 		setStateRaw(newState);
 	};
 
+	const [saved, setSaved] = React.useState<"saved" | "saving" | "error">(
+		"saved",
+	);
+	React.useEffect(() => {
+		setSaved("saving");
+		writeMatch(state).then((success) => {
+			if (success) {
+				setSaved("saved");
+			} else {
+				setSaved("error");
+			}
+		});
+	}, [state]);
+
 	return (
 		<View style={style.outer}>
 			<Text style={style.header}>General</Text>
 			<View style={style.inner}>
+				<Text style={style.text}>{saved}</Text>
 				<Choice
 					options={["Practice", "Qualification"]}
 					setState={(n) => {
@@ -140,6 +161,10 @@ export default function Match(): JSX.Element {
 					label="Team Number"
 				/>
 			</View>
+			<Text style={style.header}>
+				<b>ATTENTION</b>! Ensure the above match information is correct{" "}
+				<b>before</b> entering <b>any</b> information below.
+			</Text>
 
 			<Text style={style.header}>Autonomous</Text>
 			<View style={style.inner}>
@@ -173,11 +198,11 @@ export default function Match(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							auto: { ...state.auto, cellsDropped: s },
+							auto: { ...state.auto, lowGoalAttempts: s },
 						})
 					}
-					state={state.auto.cellsDropped}
-					label="Cells Dropped"
+					state={state.auto.lowGoalAttempts}
+					label="Attempted Low Goal Shots"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -188,6 +213,16 @@ export default function Match(): JSX.Element {
 					}
 					state={state.auto.lowGoalShots}
 					label="Cells in Low Goal"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, highGoalAttempts: s },
+						})
+					}
+					state={state.auto.highGoalAttempts}
+					label="Attempted High Goal Shots"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -216,11 +251,11 @@ export default function Match(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, cellsDropped: s },
+							teleop: { ...state.teleop, lowGoalAttempts: s },
 						})
 					}
-					state={state.teleop.cellsDropped}
-					label="Cells Dropped"
+					state={state.teleop.lowGoalAttempts}
+					label="Attempted Low Goal Shots"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -231,6 +266,16 @@ export default function Match(): JSX.Element {
 					}
 					state={state.teleop.lowGoalShots}
 					label="Cells in Low Goal"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							teleop: { ...state.teleop, highGoalAttempts: s },
+						})
+					}
+					state={state.teleop.highGoalAttempts}
+					label="Attempted High Goal Shots"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -294,27 +339,32 @@ export default function Match(): JSX.Element {
 			<Text style={style.header}>General</Text>
 			<View style={style.inner}>
 				<Choice
-					setState={(s) => setState({ ...state, speed: s })}
+					setState={(s) => setState({ ...state, speed: s ?? 2 })}
 					state={state.speed}
 					options={["1", "2", "3", "4", "5"]}
 					label="Speedyboi"
 				/>
 				<Choice
-					setState={(s) => setState({ ...state, stability: s })}
+					setState={(s) => setState({ ...state, stability: s ?? 2 })}
 					state={state.stability}
 					options={["1", "2", "3", "4", "5"]}
 					label="Stability"
 				/>
 				<Choice
-					setState={(s) => setState({ ...state, defence: s })}
-					state={state.defence}
-					options={["1", "2", "3", "4", "5"]}
+					setState={(s) =>
+						setState({
+							...state,
+							defence:
+								s === undefined
+									? undefined
+									: s === 0
+									? undefined
+									: s - 1,
+						})
+					}
+					state={state.defence === undefined ? 0 : state.defence + 1}
+					options={["None", "1", "2", "3", "4", "5"]}
 					label="Defence"
-				/>
-				<Switch
-					setState={(s) => setState({ ...state, isPrimaryDefence: s })}
-					state={state.isPrimaryDefence}
-					label="Primary Defence Bot?"
 				/>
 				<Switch
 					setState={(s) => setState({ ...state, wasBroken: s })}
@@ -331,17 +381,6 @@ export default function Match(): JSX.Element {
 				setState={(s) => setState({ ...state, notes: s })}
 				state={state.notes}
 				label="Notes and Comments"
-			/>
-			<Button
-				title="Save"
-				onPress={() =>
-					writeMatch(state).then((success) => {
-						console.log("Wrote the match: ", success);
-						setMatchNumber(undefined);
-						setTeamNumber(undefined);
-						alert("Saved.");
-					})
-				}
 			/>
 			<Text style={style.header}></Text>
 		</View>
