@@ -1,18 +1,6 @@
 import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { MatchInfo, writeMatch } from "../util/database";
-
-const style = StyleSheet.create({
-	view: {
-		flex: 1,
-	},
-	text: {
-		fontSize: 32,
-		color: "#ffffff",
-	},
-});
 
 interface HeaderProps {
 	done: () => void;
@@ -21,10 +9,13 @@ interface HeaderProps {
 
 async function gatherInfo(): Promise<MatchInfo[]> {
 	const info = [];
-	for (const key of await AsyncStorage.getAllKeys()) {
-		const data = await AsyncStorage.getItem(key);
-		if (data !== null) {
-			info.push(JSON.parse(data));
+	for (let i = 0; i < localStorage.length; i++) {
+		const key = localStorage.key(i);
+		if (key) {
+			const data = await localStorage.getItem(key);
+			if (data !== null) {
+				info.push(JSON.parse(data));
+			}
 		}
 	}
 	return info;
@@ -136,17 +127,17 @@ export default function Sync(props: HeaderProps): JSX.Element {
 	}, []);
 	if (state === "failed") {
 		return (
-			<View>
-				<Text style={style.text}>Failed to Sync!</Text>
-				<Text style={style.text}>{`Error: ${error}`}</Text>
-				<Button title="Back" onPress={props.done} />
-			</View>
+			<div>
+				<p>Failed to Sync!</p>
+				<p>{`Error: ${error}`}</p>
+				<button onClick={props.done}>Back</button>
+			</div>
 		);
 	} else {
 		return (
-			<View>
-				<Text style={style.text}>{`Syncing ${state}...`}</Text>
-			</View>
+			<div>
+				<p>{`Syncing ${state}...`}</p>
+			</div>
 		);
 	}
 }

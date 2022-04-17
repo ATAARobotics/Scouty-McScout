@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import NumberLine from "../components/NumberLine";
 import TextBox from "../components/TextBox";
 import Choice from "../components/Choice";
@@ -10,34 +9,10 @@ import {
 	MatchInfo,
 	MatchType,
 	ClimbLevel,
+	ShooterPositions,
 	readMatch,
 	writeMatch,
 } from "../util/database";
-
-const style = StyleSheet.create({
-	outer: {
-		backgroundColor: "#262626",
-		flexDirection: "column",
-		padding: 24,
-	},
-	inner: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "space-around",
-	},
-	header: {
-		fontSize: 24,
-		marginTop: 24,
-		paddingTop: 12,
-		borderTopWidth: 1,
-		borderTopColor: "#e6e6e6",
-		color: "#ffffff",
-	},
-	text: {
-		fontSize: 24,
-		color: "#ffffff",
-	},
-});
 
 /**
  *
@@ -48,6 +23,7 @@ const defaultState: MatchInfo = {
 	matchCategory: "qualification",
 	team: 0,
 	auto: {
+		preloadedCargo: false,
 		exitedTarmac: false,
 		startingLocation: "middle",
 		cellsAcquired: 0,
@@ -73,8 +49,9 @@ const defaultState: MatchInfo = {
 	stability: 2,
 	defence: undefined,
 	isPrimaryDefence: false,
-	wasDisabled: false,
+	shooterPositions: 0,
 	wasBroken: false,
+	wasDisabled: false,
 	notes: "",
 	lastModifiedTime: 0,
 };
@@ -125,10 +102,15 @@ export default function Match(): JSX.Element {
 	}, [state]);
 
 	return (
-		<View style={style.outer}>
-			<Text style={style.header}>General</Text>
-			<View style={style.inner}>
-				<Text style={style.text}>{saved}</Text>
+		<div className="outer">
+			<h1>General</h1>
+			<div className="inner">
+				<div className="item-container">
+					<p>Status:</p>
+					<p className="status">
+						{saved[0].toUpperCase() + saved.substring(1)}
+					</p>
+				</div>
 				<Choice
 					options={["Practice", "Qualification"]}
 					setState={(n) => {
@@ -160,14 +142,14 @@ export default function Match(): JSX.Element {
 					state={teamNumber}
 					label="Team Number"
 				/>
-			</View>
-			<Text style={style.header}>
+			</div>
+			<h1>
 				<b>ATTENTION</b>! Ensure the above match information is correct{" "}
 				<b>before</b> entering <b>any</b> information below.
-			</Text>
+			</h1>
 
-			<Text style={style.header}>Autonomous</Text>
-			<View style={style.inner}>
+			<h1>Autonomous</h1>
+			<div className="inner">
 				<Switch
 					setState={(s) =>
 						setState({
@@ -176,14 +158,24 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.exitedTarmac}
-					label="Exited Tarmac"
+					label="Exited Tarmac (Tape in the Center)"
 				/>
 				<Choice
 					options={["Left", "Middle", "Right"]}
 					label="Starting Location"
 				/>
-			</View>
-			<View style={style.inner}>
+			</div>
+			<div className="inner">
+				<Switch
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, preloadedCargo: s },
+						})
+					}
+					state={state.auto.preloadedCargo}
+					label="Started with ball"
+				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
@@ -192,7 +184,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.cellsAcquired}
-					label="Cells Picked Up"
+					label="Cells Picked Up (auto)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -202,7 +194,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.lowGoalAttempts}
-					label="Attempted Low Goal Shots"
+					label="Balls Shot at Low Goal (auto)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -212,7 +204,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.lowGoalShots}
-					label="Cells in Low Goal"
+					label="Balls Landed in Low Goal (auto)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -222,7 +214,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.highGoalAttempts}
-					label="Attempted High Goal Shots"
+					label="Balls Shot at High Goal (auto)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -232,11 +224,11 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.highGoalShots}
-					label="Cells in High Goal"
+					label="Balls Landed in High Goal (auto)"
 				/>
-			</View>
-			<Text style={style.header}>Teleop</Text>
-			<View style={style.inner}>
+			</div>
+			<h1>Teleop</h1>
+			<div className="inner">
 				<NumberUpDown
 					setState={(s) =>
 						setState({
@@ -245,7 +237,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.teleop.cellsAcquired}
-					label="Cells Picked Up"
+					label="Cells Picked Up (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -255,7 +247,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.teleop.lowGoalAttempts}
-					label="Attempted Low Goal Shots"
+					label="Balls Shot at Low Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -265,7 +257,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.teleop.lowGoalShots}
-					label="Cells in Low Goal"
+					label="Balls Landed in Low Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -275,7 +267,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.teleop.highGoalAttempts}
-					label="Attempted High Goal Shots"
+					label="Balls Shot at High Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -285,11 +277,11 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.teleop.highGoalShots}
-					label="Cells in High Goal"
+					label="Balls Landed in High Goal (teleop)"
 				/>
-			</View>
-			<Text style={style.header}>Climb</Text>
-			<View style={style.inner}>
+			</div>
+			<h1>Climb</h1>
+			<div className="inner">
 				<Switch
 					setState={(s) =>
 						setState({
@@ -335,9 +327,9 @@ export default function Match(): JSX.Element {
 					state={state.climb.fell}
 					label="Fell Down"
 				/>
-			</View>
-			<Text style={style.header}>General</Text>
-			<View style={style.inner}>
+			</div>
+			<h1>Ratings</h1>
+			<div className="inner">
 				<Choice
 					setState={(s) => setState({ ...state, speed: s ?? 2 })}
 					state={state.speed}
@@ -366,6 +358,17 @@ export default function Match(): JSX.Element {
 					options={["None", "1", "2", "3", "4", "5"]}
 					label="Defence"
 				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							shooterPositions: (s ?? 0) as ShooterPositions,
+						})
+					}
+					state={state.shooterPositions}
+					options={["N/A", "At Hub", "Out of Tarmac", "Both"]}
+					label="Shooter Range"
+				/>
 				<Switch
 					setState={(s) => setState({ ...state, wasBroken: s })}
 					state={state.wasBroken}
@@ -376,13 +379,13 @@ export default function Match(): JSX.Element {
 					state={state.wasDisabled}
 					label="Robot Died, Disabled, or Disconnected?"
 				/>
-			</View>
+			</div>
 			<TextBox
 				setState={(s) => setState({ ...state, notes: s })}
 				state={state.notes}
 				label="Notes and Comments"
 			/>
-			<Text style={style.header}></Text>
-		</View>
+			<h1></h1>
+		</div>
 	);
 }

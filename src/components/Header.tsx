@@ -1,30 +1,8 @@
 import React from "react";
-import { Image, Button, View, StyleSheet, TextInput } from "react-native";
 
 import { clearData } from "../util/database";
 
-const style = StyleSheet.create({
-	main: {
-		flex: 1,
-		flexDirection: "row",
-		height: 100,
-		backgroundColor: "#404050",
-	},
-	image: {
-		height: 100,
-		width: 140,
-	},
-	text: {
-		color: "#ffffff",
-		width: 200,
-		borderRadius: 6,
-		borderStyle: "solid",
-		borderWidth: 2,
-		borderColor: "#ffffff",
-	},
-});
-
-export type PageState = "match" | "sync";
+export type PageState = "match" | "pit" | "sync";
 
 interface HeaderProps {
 	setPage: (page: PageState) => void;
@@ -41,29 +19,26 @@ export default function Header(props: HeaderProps): JSX.Element {
 		}
 	}, [ip]);
 	return (
-		<View style={style.main}>
-			<Image source={require("../../assets/ataa.png")} style={style.image} />
-			<Button title="Match" onPress={() => props.setPage("match")} />
-			{/* <Button title="Pit" onPress={() => props.setPage("pit")} />*/}
-
-			<Button title="Sync" onPress={() => props.setPage("sync")} />
-			<TextInput
-				style={style.text}
+		<div className="header">
+			<img src="/ataa.png" />
+			<button onClick={() => props.setPage("match")}>Match</button>
+			<button onClick={() => props.setPage("pit")}>Pit</button>
+			<button onClick={() => props.setPage("sync")}>Sync</button>
+			<input
 				value={ip}
-				onChangeText={setIp}
+				onChange={(ev) => setIp(ev.target.value)}
 				placeholder="Other server IP"
-			></TextInput>
-			<Button
-				color="#ff0000"
-				title="Clear Data (local)"
-				onPress={() => {
+			></input>
+			<button
+				className="danger-button"
+				onClick={() => {
 					if (confirm("Are you sure you want to clear ALL local data?")) {
 						clearData();
 					}
 				}}
 			>
-				Clear All Data
-			</Button>
-		</View>
+				Clear Data (local)
+			</button>
+		</div>
 	);
 }

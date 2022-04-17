@@ -1,25 +1,4 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-
-const style = StyleSheet.create({
-	container: {
-		flexDirection: "column",
-		marginRight: 12,
-		alignItems: "center",
-	},
-	label: {
-		color: "#ffffff",
-	},
-	text: {
-		color: "#ffffff",
-		width: 240,
-		height: 24,
-		borderRadius: 6,
-		borderStyle: "solid",
-		borderWidth: 2,
-		borderColor: "#ffffff",
-	},
-});
 
 interface NumberLineProps {
 	label: string;
@@ -33,12 +12,11 @@ interface NumberLineProps {
 export default function NumberLine(props: NumberLineProps): JSX.Element {
 	const [number, setNumber] = React.useState<number>();
 	return (
-		<View style={style.container}>
-			<Text style={style.label}>{props.label}</Text>
-			<TextInput
-				style={style.text}
-				keyboardType="numeric"
-				onChangeText={(value) => {
+		<div>
+			<p>{props.label}</p>
+			<input
+				onChange={(ev) => {
+					const value = ev.target.value;
 					if (value === "") {
 						if (props.setState) {
 							props.setState(undefined);
@@ -60,11 +38,11 @@ export default function NumberLine(props: NumberLineProps): JSX.Element {
 				value={
 					props.state === undefined
 						? number === undefined
-							? ""
-							: number.toString()
-						: props.state.toString()
+							? 0
+							: number
+						: props.state
 				}
-			></TextInput>
-		</View>
+			></input>
+		</div>
 	);
 }

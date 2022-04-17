@@ -1,24 +1,4 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-
-const style = StyleSheet.create({
-	label: {
-		color: "#ffffff",
-	},
-	container: {
-		flex: 1,
-		flexDirection: "column",
-		marginRight: 12,
-	},
-	text: {
-		color: "#ffffff",
-		height: 240,
-		borderRadius: 6,
-		borderStyle: "solid",
-		borderWidth: 2,
-		borderColor: "#ffffff",
-	},
-});
 
 interface TextBoxProps {
 	label: string;
@@ -31,19 +11,17 @@ interface TextBoxProps {
  */
 export default function TextBox(props: TextBoxProps): JSX.Element {
 	return (
-		<View style={style.container}>
-			<Text style={style.label}>{props.label}</Text>
-			<TextInput
-				onChangeText={(text) => {
+		<div>
+			<h1>{props.label}</h1>
+			<textarea
+				onChange={(ev) => {
+					const text = ev.target.value;
 					if (props.setState) {
 						props.setState(text);
 					}
 				}}
 				value={props.state}
-				style={style.text}
-				spellCheck
-				multiline
-			></TextInput>
-		</View>
+			></textarea>
+		</div>
 	);
 }

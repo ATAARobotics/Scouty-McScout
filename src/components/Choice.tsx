@@ -1,43 +1,4 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-
-const style = StyleSheet.create({
-	label: {
-		color: "#ffffff",
-	},
-	container: {
-		marginRight: 12,
-		marginVertical: 6,
-		alignItems: "center",
-	},
-	buttons: {
-		flexGrow: 0,
-		flexShrink: 1,
-		flexBasis: "auto",
-		flexDirection: "row",
-	},
-	borderRight: {
-		borderTopRightRadius: 4,
-		borderBottomRightRadius: 4,
-	},
-	borderLeft: {
-		borderTopLeftRadius: 4,
-		borderBottomLeftRadius: 4,
-	},
-	buttonPress: {
-		padding: 6,
-		borderRadius: 0,
-		backgroundColor: "#545b62",
-	},
-	buttonUnpress: {
-		padding: 6,
-		borderRadius: 0,
-		backgroundColor: "#6c757d",
-	},
-	buttonText: {
-		color: "#ffffff",
-	},
-});
 
 interface ChoiceProps {
 	options: string[];
@@ -52,34 +13,35 @@ interface ChoiceProps {
 export default function Choice(props: ChoiceProps): JSX.Element {
 	const [choice, setChoice] = React.useState<number>();
 	return (
-		<View style={style.container}>
-			<Text style={style.label}>{props.label}</Text>
-			<View style={style.buttons}>
+		<div className="item-container">
+			<p className="label">{props.label}</p>
+			<div className="buttons">
 				{props.options.map((label, index) => (
-					<Pressable
+					<button
 						key={index}
-						style={[
+						className={`${
 							index ===
 							(props.state === undefined ? choice : props.state)
-								? style.buttonPress
-								: style.buttonUnpress,
+								? "button-press"
+								: "button-unpress"
+						} ${
 							index === 0
-								? style.borderLeft
+								? "border-left"
 								: index === props.options.length - 1
-								? style.borderRight
-								: {},
-						]}
-						onPress={() => {
+								? "border-right"
+								: ""
+						}`}
+						onClick={() => {
 							if (props.setState !== undefined) {
 								props.setState(index);
 							}
 							setChoice(index);
 						}}
 					>
-						<Text style={style.buttonText}>{label}</Text>
-					</Pressable>
+						<p className="button-text">{label}</p>
+					</button>
 				))}
-			</View>
-		</View>
+			</div>
+		</div>
 	);
 }

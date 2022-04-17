@@ -1,8 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 export type MatchType = "qualification" | "practice";
 
 export type ClimbLevel = 0 | 1 | 2 | 3 | 4;
+export type ShooterPositions = 0 | 1 | 2 | 3;
+export type BusinessLevel = 0 | 1 | 2;
+export type BallCapacity = 0 | 1 | 2;
+export type ShooterCapability = 0 | 1 | 2 | 3;
+export type DriveType = 0 | 1 | 2;
 
 export interface MatchInfo {
 	type: "match_info";
@@ -10,6 +13,7 @@ export interface MatchInfo {
 	matchCategory: MatchType;
 	team: number;
 	auto: {
+		preloadedCargo: boolean;
 		exitedTarmac: boolean;
 		startingLocation: "left" | "middle" | "right";
 		cellsAcquired: number;
@@ -35,24 +39,36 @@ export interface MatchInfo {
 	stability: number;
 	defence: number | undefined;
 	isPrimaryDefence: boolean;
+	shooterPositions: ShooterPositions;
 	wasBroken: boolean;
 	wasDisabled: boolean;
 	notes: string;
 	lastModifiedTime: number;
 }
 
-export type Size = 0 | 1 | 2;
-
 export interface RobotInfo {
-	type?: "robot_info";
-	team?: number;
-	size?: Size;
-	appearance?: number;
-	pitCrewSkill?: number;
-	robotDone?: boolean;
-	broken?: boolean;
-	notes?: string;
-	// TODO
+	type: "robot_info";
+	scoutingTime: number;
+	team: number;
+	pit: {
+		busy: BusinessLevel | undefined;
+		pitPeople: number | undefined;
+		chaos: number | undefined;
+		friendly: boolean | undefined;
+		comments: string;
+	};
+	robot: {
+		autoBallCount: number | undefined;
+		ballCapacity: BallCapacity | undefined;
+		climbTime: number | undefined;
+		climbHeight: ClimbLevel | undefined;
+		climbEverybot: boolean | undefined;
+		shooterCapability: ShooterCapability | undefined;
+		shooterRange: ShooterPositions | undefined;
+		driveType: DriveType | undefined;
+		comments: string;
+	};
+	lastModifiedTime: number;
 }
 
 /**
@@ -69,6 +85,14 @@ function getIdFromMatchInfo(
 }
 
 /**
+ * @param scoutingTime
+ * @param team
+ */
+function getIdFromRobotInfo(scoutingTime: number, team: number): string {
+	return `@RobotInfo:team_${team.toString()}_${scoutingTime.toString()}`;
+}
+
+/**
  * @param data
  */
 export async function writeMatch(data: MatchInfo): Promise<boolean> {
@@ -80,23 +104,27 @@ export async function writeMatch(data: MatchInfo): Promise<boolean> {
 		return false;
 	}
 	const id = getIdFromMatchInfo(data.match, data.matchCategory, data.team);
-	await AsyncStorage.setItem(id, JSON.stringify(data));
+	console.log("Saved match ", id);
+	localStorage.setItem(id, JSON.stringify(data));
 	return true;
 }
 
-// /**
-//  * @param data
-//  */
-// export async function writeRobot(data: RobotInfo): Promise<void> {
-// 	// db.put({
-// 	// 	_id: [data.team],
-// 	// 	...data
-// 	// });
-// }
+/**
+ * @param data
+ */
+export async function writeRobot(data: RobotInfo): Promise<boolean> {
+	if (data.scoutingTime === undefined || data.team === undefined) {
+		return false;
+	}
+	const id = getIdFromRobotInfo(data.scoutingTime, data.team);
+	console.log("Saved robot ", id);
+	localStorage.setItem(id, JSON.stringify(data));
+	return true;
+}
 
 /**
  * @param match
- * @param match_category
+ * @param matchCategory
  * @param team
  */
 export async function readMatch(
@@ -104,29 +132,36 @@ export async function readMatch(
 	matchCategory: MatchType,
 	team: number,
 ): Promise<MatchInfo | undefined> {
-	const matchData = JSON.parse(
-		(await AsyncStorage.getItem(
-			getIdFromMatchInfo(match, matchCategory, team),
-		)) || "null",
-	);
+	const id = getIdFromMatchInfo(match, matchCategory, team);
+	const matchData = JSON.parse(localStorage.getItem(id) || "null");
+	console.log("Loaded match ", id);
 	if (matchData === null) {
 		return undefined;
 	}
 	return matchData;
 }
 
-// /**
-//  * @param team
-//  */
-// export async function readRobot(team: number): Promise<RobotInfo> {
-// 	return undefined as any as RobotInfo;
-// 	// return db.get(["match_info", team]);
-// }
+/**
+ * @param scoutingTime
+ * @param team
+ */
+export async function readRobot(
+	scoutingTime: number,
+	team: number,
+): Promise<RobotInfo | undefined> {
+	const id = getIdFromRobotInfo(scoutingTime, team);
+	const matchData = JSON.parse(localStorage.getItem(id) || "null");
+	console.log("Loaded team ", id);
+	if (matchData === null) {
+		return undefined;
+	}
+	return matchData;
+}
 
 /**
  * Clears all local data
  */
 
 export async function clearData(): Promise<void> {
-	await AsyncStorage.clear();
+	localStorage.clear();
 }
