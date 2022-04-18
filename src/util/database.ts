@@ -68,6 +68,7 @@ export interface RobotInfo {
 		driveType: DriveType | undefined;
 		comments: string;
 	};
+	images: string[];
 	lastModifiedTime: number;
 }
 

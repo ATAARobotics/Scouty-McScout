@@ -137,3 +137,11 @@ input {
 input[type="checkbox"] {
 	width: 2rem;
 }
+
+.bot-image {
+	height: 8rem;
+}
+
+video {
+	height: 20rem;
+}

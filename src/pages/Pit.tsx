@@ -47,6 +47,7 @@ const defaultState: RobotInfo = {
 		driveType: undefined,
 		comments: "",
 	},
+	images: [],
 	lastModifiedTime: 0,
 };
 
@@ -72,7 +73,6 @@ export default function Pit(): JSX.Element {
 	}, [scoutingTime, teamNumber]);
 	const setState = (newState: RobotInfo) => {
 		newState.lastModifiedTime = Date.now();
-		console.log("State: ", newState);
 		setStateRaw(newState);
 	};
 
@@ -81,6 +81,7 @@ export default function Pit(): JSX.Element {
 	);
 	React.useEffect(() => {
 		setSaved("saving");
+		console.log("Saving State: ", state);
 		writeRobot(state).then((success) => {
 			if (success) {
 				setSaved("saved");
@@ -90,6 +91,32 @@ export default function Pit(): JSX.Element {
 		});
 	}, [state]);
 
+	const saveImage = (
+		image: HTMLImageElement | HTMLVideoElement,
+		imageWidth: number,
+		imageHeight: number,
+	) => {
+		const MAX_WIDTH = 960;
+		const MAX_HEIGHT = 720;
+		const scale = Math.min(MAX_WIDTH / imageWidth, MAX_HEIGHT / imageHeight);
+
+		console.log("Saving image: ", imageWidth, imageHeight, image);
+
+		const canvas = document.createElement("canvas");
+		canvas.width = imageWidth * scale;
+		canvas.height = imageHeight * scale;
+		const context = canvas.getContext("2d");
+		if (context !== null) {
+			context.drawImage(image, 0, 0, canvas.width, canvas.height);
+			const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+			setState({
+				...state,
+				images: [...state.images, dataUrl],
+			});
+		}
+	};
+
+	const [videoStream, setVideoStream] = React.useState<MediaStream>();
 	return (
 		<div className="outer">
 			<h1>General</h1>
@@ -105,11 +132,21 @@ export default function Pit(): JSX.Element {
 					state={teamNumber}
 					label="Team Number"
 				/>
-				<NumberUpDown
-					setState={(value) => setScoutingTime(value ?? 0)}
-					state={scoutingTime}
-					label="# Times Scouting This Team"
-				/>
+				<div className="item-container">
+					<label htmlFor="visits">Visit # / Day</label>
+					<select
+						id="visits"
+						onChange={(ev) => {
+							const value = parseInt(ev.target.value) || 0;
+							setScoutingTime(value);
+						}}
+						value={scoutingTime}
+					>
+						<option value="0">First Visit (Wednesday)</option>
+						<option value="1">Second Visit (Friday)</option>
+						<option value="2">Other Visit (Unplanned)</option>
+					</select>
+				</div>
 			</div>
 			<h1>Checklist</h1>
 			<div className="inner">
@@ -204,17 +241,17 @@ export default function Pit(): JSX.Element {
 					state={state.pit.friendly}
 					label="Friendly"
 				/>
-				<TextBox
-					setState={(s) =>
-						setState({
-							...state,
-							pit: { ...state.pit, comments: s },
-						})
-					}
-					state={state.pit.comments}
-					label="Pit/Team Notes and Comments"
-				/>
 			</div>
+			<TextBox
+				setState={(s) =>
+					setState({
+						...state,
+						pit: { ...state.pit, comments: s },
+					})
+				}
+				state={state.pit.comments}
+				label="Pit/Team Notes and Comments"
+			/>
 			<h1>Bot</h1>
 			<div className="inner">
 				<NumberUpDown
@@ -308,16 +345,108 @@ export default function Pit(): JSX.Element {
 					options={["Swerve", "Tank", "Other"]}
 					label="Drive Train"
 				/>
-				<TextBox
-					setState={(s) =>
-						setState({
-							...state,
-							robot: { ...state.robot, comments: s },
-						})
+			</div>
+			<TextBox
+				setState={(s) =>
+					setState({
+						...state,
+						robot: { ...state.robot, comments: s },
+					})
+				}
+				state={state.robot.comments}
+				label="Bot Notes and Comments"
+			/>
+			<h1>Pictures</h1>
+			<div className="inner">
+				<div className="item-container">
+					<label htmlFor="cap-image">Capture Robot Picture</label>
+					<input
+						id="cap-image"
+						type="file"
+						capture="environment"
+						accept="image/*"
+						onChange={(ev) => {
+							if (ev.target.files !== null) {
+								const fileList = ev.target.files;
+								for (let i = 0; i < fileList.length; i++) {
+									const file = fileList[i];
+									if (file !== undefined) {
+										const img = document.createElement("img");
+										img.addEventListener("load", () => {
+											saveImage(img, img.width, img.height);
+										});
+										img.src = URL.createObjectURL(file);
+									}
+								}
+							}
+						}}
+					/>
+				</div>
+				{(() => {
+					if (videoStream !== undefined) {
+						return (
+							<video
+								autoPlay
+								ref={(tag) => {
+									if (tag !== null) {
+										tag.srcObject = videoStream;
+										tag.play();
+									}
+								}}
+								onClick={(ev) =>
+									saveImage(
+										ev.target as HTMLVideoElement,
+										(ev.target as HTMLVideoElement).videoWidth,
+										(ev.target as HTMLVideoElement).videoHeight,
+									)
+								}
+							/>
+						);
+					} else {
+						return (
+							<button
+								onClick={() => {
+									navigator.mediaDevices
+										.getUserMedia({
+											video: {
+												width: {
+													min: 480.0,
+													max: 1920.0,
+													ideal: 960.0,
+												},
+												height: {
+													min: 360.0,
+													max: 1080.0,
+													ideal: 720.0,
+												},
+												facingMode: "environment",
+											},
+										})
+										.then(setVideoStream);
+								}}
+							>
+								Start Video
+							</button>
+						);
 					}
-					state={state.robot.comments}
-					label="Bot Notes and Comments"
-				/>
+				})()}
+			</div>
+			<div className="inner">
+				{state.images.map((img, i) => (
+					<div className="item-container" key={`image-${i}`}>
+						<button
+							onClick={() => {
+								setState({
+									...state,
+									images: state.images.filter((_, i2) => i2 !== i),
+								});
+							}}
+						>
+							X
+						</button>
+						<img className="bot-image" src={img} />
+					</div>
+				))}
 			</div>
 		</div>
 	);
