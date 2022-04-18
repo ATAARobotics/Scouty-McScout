@@ -23,7 +23,7 @@ export default function Header(props: HeaderProps): JSX.Element {
 			<img src="/ataa.png" />
 			<button onClick={() => props.setPage("match")}>Match</button>
 			<button onClick={() => props.setPage("pit")}>Pit</button>
-			<button onClick={() => props.setPage("sync")}>Sync</button>
+			<button onClick={() => props.setPage("sync")}>Send Data</button>
 			<input
 				value={ip}
 				onChange={(ev) => setIp(ev.target.value)}

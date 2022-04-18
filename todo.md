@@ -1,7 +1,7 @@
- * [ ] Make pit scouting frontend work
-   * [ ] Confermation for sync
-   * [ ] Per-team instructions
-   * [ ] Multiple pit scouts
+ * [x] Make pit scouting frontend work
+   * [x] Confermation for sync
+   * [x] Per-team instructions
+   * [x] Multiple pit scouts
  * [ ] Make pit scouting backend work
    * [ ] Show info in analysis
    * [ ] Add specific team view

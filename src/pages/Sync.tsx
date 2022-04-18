@@ -49,6 +49,12 @@ export default function Sync(props: HeaderProps): JSX.Element {
 		| "failed"
 		| "done"
 	>("starting");
+	React.useEffect(() => {
+		if (state === "done") {
+			alert("Sync Successful!");
+			props.done();
+		}
+	}, [state]);
 	const [error, setError] = React.useState<string | undefined>(undefined);
 	React.useEffect(() => {
 		setState("gathering");
@@ -115,7 +121,6 @@ export default function Sync(props: HeaderProps): JSX.Element {
 									throw new Error("failed");
 								}
 								setState("done");
-								props.done();
 							}),
 					),
 				);
