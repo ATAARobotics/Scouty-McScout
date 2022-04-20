@@ -105,21 +105,38 @@ export async function writeMatch(data: MatchInfo): Promise<boolean> {
 		return false;
 	}
 	const id = getIdFromMatchInfo(data.match, data.matchCategory, data.team);
-	console.log("Saved match ", id);
-	localStorage.setItem(id, JSON.stringify(data));
+	console.log("Writing Match Info:", id);
+	try {
+		localStorage.setItem(id, JSON.stringify(data));
+	} catch (e) {
+		alert(
+			"Error saving (likely not enough storage space / too many images, try sync)",
+		);
+		console.error("Error saving:", e);
+	}
 	return true;
 }
 
 /**
  * @param data
  */
-export async function writeRobot(data: RobotInfo): Promise<boolean> {
+export async function writeRobot(data: RobotInfo, autoscoutUrl: string): Promise<boolean> {
 	if (data.scoutingTime === undefined || data.team === undefined) {
 		return false;
 	}
 	const id = getIdFromRobotInfo(data.scoutingTime, data.team);
-	console.log("Saved robot ", id);
-	localStorage.setItem(id, JSON.stringify(data));
+	for (const id in data.images) {
+		data.images[id] = data.images[id].replaceAll("{AUTOSCOUT_URL}", autoscoutUrl);
+	}
+	console.log("Writing Robot Info:", id);
+	try {
+		localStorage.setItem(id, JSON.stringify(data));
+	} catch (e) {
+		alert(
+			"Error saving (likely not enough storage space / too many images, try sync)",
+		);
+		console.error("Error saving:", e);
+	}
 	return true;
 }
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { MatchInfo, writeMatch } from "../util/database";
+import { MatchInfo, RobotInfo, writeMatch, writeRobot } from "../util/database";
 
 interface HeaderProps {
 	done: () => void;
@@ -21,22 +21,25 @@ async function gatherInfo(): Promise<MatchInfo[]> {
 	return info;
 }
 
-async function updateInfo(info: MatchInfo[]): Promise<boolean> {
-	for (const match of info) {
-		writeMatch(match);
+async function updateInfo(infos: (MatchInfo | RobotInfo)[], fromUrl: string): Promise<boolean> {
+	for (const info of infos) {
+		if (info.type === "robot_info") {
+			writeRobot(info, fromUrl);
+		} else if (info.type === "match_info") {
+			writeMatch(info);
+		} else {
+			console.warn("Unknown data type from server:", info);
+		}
 	}
 	return true;
 }
 
 const API_ENDPOINTS = [
+	// Local
+	"http://localhost:4421/",
 	// Server McServerface
 	"https://autoscout.ben1jen.ca:4431/",
 	"http://autoscout.ben1jen.ca:4421/",
-	// Scouting Pi
-	"http://raspberry-mcpiface.lan:4421/",
-	"http://raspberry-mcpiface.local:4421/",
-	// Local
-	"http://localhost:4421/",
 ];
 
 export default function Sync(props: HeaderProps): JSX.Element {
@@ -111,7 +114,7 @@ export default function Sync(props: HeaderProps): JSX.Element {
 										"Pull failed with error: " + response.error,
 									);
 								}
-								return updateInfo(response.data);
+								return updateInfo(response.data, endpoint.replace(/\/$/, ""));
 							})
 							.then((result) => {
 								if (result === false) {
