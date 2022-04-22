@@ -82,7 +82,7 @@ export default function Pit(): JSX.Element {
 	React.useEffect(() => {
 		setSaved("saving");
 		console.log("Saving State: ", state);
-		writeRobot(state).then((success) => {
+		writeRobot(state, "").then((success) => {
 			if (success) {
 				setSaved("saved");
 			} else {

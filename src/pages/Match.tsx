@@ -101,48 +101,8 @@ export default function Match(): JSX.Element {
 		});
 	}, [state]);
 
-	return (
-		<div className="outer">
-			<h1>General</h1>
-			<div className="inner">
-				<div className="item-container">
-					<p>Status:</p>
-					<p className="status">
-						{saved[0].toUpperCase() + saved.substring(1)}
-					</p>
-				</div>
-				<Choice
-					options={["Practice", "Qualification"]}
-					setState={(n) => {
-						switch (n) {
-							case 0:
-								setMatchCategory("practice");
-								break;
-							case 1:
-								setMatchCategory("qualification");
-								break;
-						}
-					}}
-					state={
-						matchCategory === undefined
-							? undefined
-							: matchCategory === "practice"
-							? 0
-							: 1
-					}
-					label="Match Type"
-				/>
-				<NumberLine
-					setState={setMatchNumber}
-					state={matchNumber}
-					label="Match Number"
-				/>
-				<NumberLine
-					setState={setTeamNumber}
-					state={teamNumber}
-					label="Team Number"
-				/>
-			</div>
+	const choices = (
+		<>
 			<h1>
 				<b>ATTENTION</b>! Ensure the above match information is correct{" "}
 				<b>before</b> entering <b>any</b> information below.
@@ -385,7 +345,63 @@ export default function Match(): JSX.Element {
 				state={state.notes}
 				label="Notes and Comments"
 			/>
-			<h1></h1>
+		</>
+	);
+
+	return (
+		<div className="outer">
+			<h1>General</h1>
+			<div className="inner">
+				<div className="item-container">
+					<p>Status:</p>
+					<p className="status">
+						{saved[0].toUpperCase() + saved.substring(1)}
+					</p>
+				</div>
+				<Choice
+					options={["Practice", "Qualification"]}
+					setState={(n) => {
+						switch (n) {
+							case 0:
+								setMatchCategory("practice");
+								break;
+							case 1:
+								setMatchCategory("qualification");
+								break;
+						}
+					}}
+					state={
+						matchCategory === undefined
+							? undefined
+							: matchCategory === "practice"
+							? 0
+							: 1
+					}
+					label="Match Type"
+				/>
+				<NumberLine
+					setState={setMatchNumber}
+					state={matchNumber}
+					label="Match Number"
+				/>
+				<NumberLine
+					setState={setTeamNumber}
+					state={teamNumber}
+					label="Team Number"
+				/>
+			</div>
+			{matchCategory !== undefined &&
+			matchNumber !== undefined &&
+			matchNumber !== 0 &&
+			teamNumber !== undefined &&
+			teamNumber !== 0 ? (
+				choices
+			) : (
+				<h1>
+					Please fill out the match information above <b>completely</b> and{" "}
+					<b>correctly</b> before entering information.
+				</h1>
+			)}
 		</div>
 	);
 }

@@ -21,7 +21,10 @@ async function gatherInfo(): Promise<MatchInfo[]> {
 	return info;
 }
 
-async function updateInfo(infos: (MatchInfo | RobotInfo)[], fromUrl: string): Promise<boolean> {
+async function updateInfo(
+	infos: (MatchInfo | RobotInfo)[],
+	fromUrl: string,
+): Promise<boolean> {
 	for (const info of infos) {
 		if (info.type === "robot_info") {
 			writeRobot(info, fromUrl);
@@ -114,7 +117,10 @@ export default function Sync(props: HeaderProps): JSX.Element {
 										"Pull failed with error: " + response.error,
 									);
 								}
-								return updateInfo(response.data, endpoint.replace(/\/$/, ""));
+								return updateInfo(
+									response.data,
+									endpoint.replace(/\/$/, ""),
+								);
 							})
 							.then((result) => {
 								if (result === false) {

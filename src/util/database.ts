@@ -120,13 +120,19 @@ export async function writeMatch(data: MatchInfo): Promise<boolean> {
 /**
  * @param data
  */
-export async function writeRobot(data: RobotInfo, autoscoutUrl: string): Promise<boolean> {
+export async function writeRobot(
+	data: RobotInfo,
+	autoscoutUrl: string,
+): Promise<boolean> {
 	if (data.scoutingTime === undefined || data.team === undefined) {
 		return false;
 	}
 	const id = getIdFromRobotInfo(data.scoutingTime, data.team);
 	for (const id in data.images) {
-		data.images[id] = data.images[id].replaceAll("{AUTOSCOUT_URL}", autoscoutUrl);
+		data.images[id] = data.images[id].replaceAll(
+			"{AUTOSCOUT_URL}",
+			autoscoutUrl,
+		);
 	}
 	console.log("Writing Robot Info:", id);
 	try {
