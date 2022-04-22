@@ -121,6 +121,26 @@ export default function Match(): JSX.Element {
 					label="Exited Tarmac (Tape in the Center)"
 				/>
 				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							auto: {
+								...state.auto,
+								startingLocation: ["left", "middle", "right"][
+									s ?? 0
+								] as "left" | "middle" | "right",
+							},
+						})
+					}
+					state={
+						state.auto.startingLocation === "left"
+							? 0
+							: state.auto.startingLocation === "middle"
+							? 1
+							: state.auto.startingLocation === "right"
+							? 2
+							: undefined
+					}
 					options={["Left", "Middle", "Right"]}
 					label="Starting Location"
 				/>
