@@ -26,7 +26,7 @@ const defaultState: MatchInfo = {
 		preloadedCargo: false,
 		exitedTarmac: false,
 		startingLocation: "middle",
-		cellsAcquired: 0,
+		cubesAcquired: 0,
 		lowGoalAttempts: 0,
 		lowGoalShots: 0,
 		highGoalAttempts: 0,
@@ -160,11 +160,11 @@ export default function Match(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							auto: { ...state.auto, cellsAcquired: s },
+							auto: { ...state.auto, cubesAcquired: s },
 						})
 					}
-					state={state.auto.cellsAcquired}
-					label="Cells Picked Up (auto)"
+					state={state.auto.cubesAcquired}
+					label="Cubes Picked Up (auto)"
 				/>
 				<NumberUpDown
 					setState={(s) =>

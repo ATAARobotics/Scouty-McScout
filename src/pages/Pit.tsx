@@ -10,7 +10,7 @@ import {
 	ClimbLevel,
 	ShooterPositions,
 	BusinessLevel,
-	BallCapacity,
+	CubeCapacity,
 	ShooterCapability,
 	DriveType,
 	writeRobot,
@@ -22,6 +22,11 @@ const perTeamInstructions: { [team: number]: string[] } = {
 		"This is a specific instruction for our team",
 		"This is another one",
 		"Don't scout ourselves!",
+	],
+	[4]: [
+		"Hi",
+		"Check this off",
+		"now.",
 	],
 };
 
@@ -38,7 +43,7 @@ const defaultState: RobotInfo = {
 	},
 	robot: {
 		autoBallCount: undefined,
-		ballCapacity: undefined,
+		cubeCapacity: undefined,
 		climbTime: undefined,
 		climbHeight: undefined,
 		climbEverybot: undefined,
@@ -268,12 +273,12 @@ export default function Pit(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, ballCapacity: s as BallCapacity },
+							robot: { ...state.robot, cubeCapacity: s as CubeCapacity },
 						})
 					}
-					state={state.robot.ballCapacity}
+					state={state.robot.cubeCapacity}
 					options={["No Shooter", "1", "2"]}
-					label="Ball Capacity"
+					label="Cube Capacity"
 				/>
 				<NumberUpDown
 					setState={(s) =>
