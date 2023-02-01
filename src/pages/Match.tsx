@@ -148,9 +148,9 @@ export default function Match(): JSX.Element {
 							...state,
 							auto: {
 								...state.auto,
-								chargeStation: ["off", "on", "balanced"][
+								chargeStation: ["off", "on", "charged"][
 									s ?? 0
-								] as "off" | "on" | "balanced",
+								] as "off" | "on" | "charged",
 							},
 						})
 					}
@@ -159,11 +159,11 @@ export default function Match(): JSX.Element {
 							? 0
 							: state.auto.chargeStation === "on"
 							? 1
-							: state.auto.chargeStation === "balanced"
+							: state.auto.chargeStation === "charged"
 							? 2
 							: undefined
 					}
-					options={["Off", "On", "Balanced"]}
+					options={["Off", "On", "Charged"]}
 					label="Charge Station (Balance Board)"
 				/> 
 				
@@ -288,9 +288,9 @@ export default function Match(): JSX.Element {
 							...state,
 							teleop: {
 								...state.teleop,
-								chargeStation: ["off", "on", "balanced"][
+								chargeStation: ["off", "on", "charged"][
 									s ?? 0
-								] as "off" | "on" | "balanced",
+								] as "off" | "on" | "charged",
 							},
 						})
 					}
@@ -299,11 +299,11 @@ export default function Match(): JSX.Element {
 							? 0
 							: state.teleop.chargeStation === "on"
 							? 1
-							: state.teleop.chargeStation === "balanced"
+							: state.teleop.chargeStation === "charged"
 							? 2
 							: undefined
 					}
-					options={["Off", "On", "Balanced"]}
+					options={["Off", "On", "Charged"]}
 					label="Charge Station (Balance Board) (Teleop final park)"
 				/> 
 			</div>
