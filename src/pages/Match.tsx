@@ -8,41 +8,12 @@ import NumberUpDown from "../components/NumberUpDown";
 import {
 	MatchInfo,
 	MatchType,
-	ClimbLevel,
-	ShooterPositions,
 	readMatch,
 	writeMatch,
 } from "../util/database";
 
 /*
-Auto:
-Pre loaded
-Mobility
-Hybrid
-Cone Medium
-Cone High
-Cube Medium
-Cube High
-Off/On/Balanced station
 Someone on team balanced (get from blue alliance?)
-
-Teleop:
-Hybrid
-Cone Medium
-Cone High
-Cube Medium
-Cube High
-Normal Park
-Off/On/Balanced station
-
-General:
-Speedyboi
-Stability
-Defence
-Broke/Disconnected
-Notes
-
-
  */
 const defaultState: MatchInfo = {
 	type: "match_info",

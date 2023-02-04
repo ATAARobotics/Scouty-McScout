@@ -7,11 +7,9 @@ import NumberUpDown from "../components/NumberUpDown";
 
 import {
 	RobotInfo,
-	ClimbLevel,
-	ShooterPositions,
+	StackType,
+	StackRange,
 	BusinessLevel,
-	CubeCapacity,
-	ShooterCapability,
 	DriveType,
 	writeRobot,
 	readRobot,
@@ -19,14 +17,7 @@ import {
 
 const perTeamInstructions: { [team: number]: string[] } = {
 	[4421]: [
-		"This is a specific instruction for our team",
-		"This is another one",
-		"Don't scout ourselves!",
-	],
-	[4]: [
-		"Hi",
-		"Check this off",
-		"now.",
+		"Scouting ourselves, be friendly!"
 	],
 };
 
@@ -42,14 +33,11 @@ const defaultState: RobotInfo = {
 		comments: "",
 	},
 	robot: {
-		autoBallCount: undefined,
-		cubeCapacity: undefined,
-		climbTime: undefined,
-		climbHeight: undefined,
-		climbEverybot: undefined,
-		shooterCapability: undefined,
-		shooterRange: undefined,
+		stackType: undefined,
+		stackRange: undefined,
 		driveType: undefined,
+		balanceTime: undefined,
+		everybot: undefined,
 		comments: "",
 	},
 	images: [],
@@ -165,32 +153,38 @@ export default function Pit(): JSX.Element {
 					<li>
 						<input id="cb-2" type="checkbox" />
 						<label htmlFor="cb-2">
-							Can you shoot high goal if so where can you shoot from?
+							What gamepieces can your robot pick up?
 						</label>
 					</li>
 					<li>
 						<input id="cb-3" type="checkbox" />
 						<label htmlFor="cb-3">
-							How high can you climb and how long do you need to climb?
+							What levels can you score on?
 						</label>
 					</li>
 					<li>
 						<input id="cb-4" type="checkbox" />
 						<label htmlFor="cb-4">
-							How many balls can you score in auto?
+							How long does it take for you to balance?
+						</label>
+					</li>
+					<li>
+						<input id="cb-5" type="checkbox" />
+						<label htmlFor="cb-5">
+							Whats your drive train?
 						</label>
 					</li>
 					{(perTeamInstructions[teamNumber] ?? []).map(
 						(name: string, i: number) => (
 							<li key={name}>
-								<input id={`cb-5-${i}`} type="checkbox" />
-								<label htmlFor={`cb-5-${i}`}>{name}</label>
+								<input id={`cb-6-${i}`} type="checkbox" />
+								<label htmlFor={`cb-6-${i}`}>{name}</label>
 							</li>
 						),
 					)}
 					<li>
-						<input id="cb-6" type="checkbox" />
-						<label htmlFor="cb-6">
+						<input id="cb-7" type="checkbox" />
+						<label htmlFor="cb-7">
 							Can we take pictures of your robot?
 						</label>
 					</li>
@@ -259,85 +253,47 @@ export default function Pit(): JSX.Element {
 			/>
 			<h1>Bot</h1>
 			<div className="inner">
-				<NumberUpDown
+			<Choice
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, autoBallCount: s },
+							robot: { ...state.robot, stackType: s as StackType },
 						})
 					}
-					state={state.robot.autoBallCount}
-					label="Auto Ball Count"
+					state={state.robot.stackType}
+					options={["None", "Cones Only", "Cubes Only", "Both"]}
+					label="Stacking Type"
 				/>
 				<Choice
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, cubeCapacity: s as CubeCapacity },
+							robot: { ...state.robot, stackRange: s as StackRange },
 						})
 					}
-					state={state.robot.cubeCapacity}
-					options={["No Shooter", "1", "2"]}
-					label="Cube Capacity"
+					state={state.robot.stackRange}
+					options={["None", "Hybrid Only", "Middle", "High", "All"]}
+					label="Stacking Range"
 				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, climbTime: s },
+							robot: { ...state.robot, balanceTime: s },
 						})
 					}
-					state={state.robot.climbTime}
-					label="Climb Time (seconds)"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: { ...state.robot, climbHeight: s as ClimbLevel },
-						})
-					}
-					state={state.robot.climbHeight}
-					options={["None", "Low", "Medium", "High", "Traversal"]}
-					label="Climb Height"
+					state={state.robot.balanceTime}
+					label="Balance Time (seconds)"
 				/>
 				<Switch
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, climbEverybot: s },
+							robot: { ...state.robot, everybot: s },
 						})
 					}
-					state={state.robot.climbEverybot}
-					label="Everybot Hooks"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: {
-								...state.robot,
-								shooterCapability: s as ShooterCapability,
-							},
-						})
-					}
-					state={state.robot.shooterCapability}
-					options={["None", "Low", "High", "Both"]}
-					label="Shooter"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: {
-								...state.robot,
-								shooterRange: s as ShooterPositions,
-							},
-						})
-					}
-					state={state.robot.shooterRange}
-					options={["N/A", "At Hub", "Out of Tarmac", "Both"]}
-					label="Shooter Range"
+					state={state.robot.everybot}
+					label="Everybot"
 				/>
 				<Choice
 					setState={(s) =>
