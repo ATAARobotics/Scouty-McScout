@@ -4,7 +4,8 @@ import TextBox from "../components/TextBox";
 import Choice from "../components/Choice";
 import Switch from "../components/Switch";
 import NumberUpDown from "../components/NumberUpDown";
-
+// This file is for pit scouting.
+// Imports from database file
 import {
 	RobotInfo,
 	PickupType,
@@ -18,12 +19,14 @@ import {
 	readRobot,
 } from "../util/database";
 
+// Add an instruction to ask another team here
 const perTeamInstructions: { [team: number]: string[] } = {
 	[4421]: [
 		"Scouting ourselves, be friendly!"
 	],
 };
 
+// Decide the default state for the buttons
 const defaultState: RobotInfo = {
 	type: "robot_info",
 	scoutingTime: 0,
@@ -32,7 +35,7 @@ const defaultState: RobotInfo = {
 		busy: undefined,
 		pitPeople: undefined,
 		chaos: undefined,
-		friendly: undefined,
+		friendly: true,
 		comments: "",
 	},
 	robot: {
@@ -55,6 +58,7 @@ export default function Pit(): JSX.Element {
 	const [teamNumber, setTeamNumber] = React.useState<number>(0);
 	const [state, setStateRaw] = React.useState<RobotInfo>(defaultState);
 
+	// If team hasnt been scouted, override
 	React.useEffect(() => {
 		if (scoutingTime !== undefined && teamNumber !== undefined) {
 			readRobot(scoutingTime, teamNumber).then((match) => {
@@ -90,6 +94,7 @@ export default function Pit(): JSX.Element {
 		});
 	}, [state]);
 
+	// Taking images
 	const saveImage = (
 		image: HTMLImageElement | HTMLVideoElement,
 		imageWidth: number,
@@ -114,8 +119,10 @@ export default function Pit(): JSX.Element {
 			});
 		}
 	};
-
+	// Taking videos
 	const [videoStream, setVideoStream] = React.useState<MediaStream>();
+	// Returns this information on the website, anything put in here including comments will show on the site!
+	// Has checkboxes inside, edit those depending on what we are scouting and what we want to ask
 	return (
 		<div className="outer">
 			<h1>General</h1>
@@ -159,38 +166,56 @@ export default function Pit(): JSX.Element {
 					<li>
 						<input id="cb-2" type="checkbox" />
 						<label htmlFor="cb-2">
-							What gamepieces can your robot pick up and from where?
+							What gamepieces can your robot pick up?
 						</label>
 					</li>
 					<li>
 						<input id="cb-3" type="checkbox" />
 						<label htmlFor="cb-3">
-							What levels can you score on and which game pieces?
+							Can your robot pick up from the floor, and specifically the hybrid module?
 						</label>
 					</li>
 					<li>
 						<input id="cb-4" type="checkbox" />
 						<label htmlFor="cb-4">
-							How long does it take for you to balance?
+							Which driver station dispensers can your robot pick up from?
 						</label>
 					</li>
 					<li>
 						<input id="cb-5" type="checkbox" />
 						<label htmlFor="cb-5">
+							What game pieces can you score?
+						</label>
+					</li>
+					<li>
+						<input id="cb-6" type="checkbox" />
+						<label htmlFor="cb-6">
+							What levels can you stack on?
+						</label>
+					</li>
+					<li>
+						<input id="cb-7" type="checkbox" />
+						<label htmlFor="cb-7">
+							How long does it take for you to balance?
+						</label>
+					</li>
+					<li>
+						<input id="cb-8" type="checkbox" />
+						<label htmlFor="cb-8">
 							Whats your drive train?
 						</label>
 					</li>
 					{(perTeamInstructions[teamNumber] ?? []).map(
 						(name: string, i: number) => (
 							<li key={name}>
-								<input id={`cb-6-${i}`} type="checkbox" />
-								<label htmlFor={`cb-6-${i}`}>{name}</label>
+								<input id={`cb-9-${i}`} type="checkbox" />
+								<label htmlFor={`cb-9-${i}`}>{name}</label>
 							</li>
 						),
 					)}
 					<li>
-						<input id="cb-7" type="checkbox" />
-						<label htmlFor="cb-7">
+						<input id="cb-10" type="checkbox" />
+						<label htmlFor="cb-10">
 							Can we take pictures of your robot?
 						</label>
 					</li>

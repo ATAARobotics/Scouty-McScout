@@ -4,7 +4,7 @@ import TextBox from "../components/TextBox";
 import Choice from "../components/Choice";
 import Switch from "../components/Switch";
 import NumberUpDown from "../components/NumberUpDown";
-
+// This is for match data
 import {
 	MatchInfo,
 	MatchType,
@@ -13,8 +13,10 @@ import {
 } from "../util/database";
 
 /*
+Things to add:
 Someone on team balanced (get from blue alliance?)
  */
+// Decide the default state of the buttons
 const defaultState: MatchInfo = {
 	type: "match_info",
 	match: 0,
@@ -22,7 +24,7 @@ const defaultState: MatchInfo = {
 	team: 0,
 	auto: {
 		exitedTarmac: false,
-		chargeStation: "off",
+		autoChargeStation: "off",
 		conePickedUp: 0,
 		cubePickedUp: 0,
 		hybridScored: 0,
@@ -39,8 +41,7 @@ const defaultState: MatchInfo = {
 		middleConeScored: 0,
 		highCubeScored: 0,
 		highConeScored: 0,
-		parked: false,
-		chargeStation: "off",
+		teleopChargeStation: "off",
 	},
 	
 	speed: 2,
@@ -52,6 +53,7 @@ const defaultState: MatchInfo = {
 	notes: "",
 	lastModifiedTime: 0,
 };
+// Require that match category, match number and team number are filled in to continue
 export default function Match(): JSX.Element {
 	const [matchCategory, setMatchCategory] = React.useState<MatchType>();
 	const [matchNumber, setMatchNumber] = React.useState<number>();
@@ -98,6 +100,7 @@ export default function Match(): JSX.Element {
 		});
 	}, [state]);
 
+	// This displays the information on the website, anything put in this constructor will show (including comments)
 	const choices = (
 		<>
 			<h1>
@@ -117,30 +120,6 @@ export default function Match(): JSX.Element {
 					state={state.auto.exitedTarmac}
 					label="Exited Tarmac (Tape in the Center)"
 				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							auto: {
-								...state.auto,
-								chargeStation: ["off", "on", "charged"][
-									s ?? 0
-								] as "off" | "on" | "charged",
-							},
-						})
-					}
-					state={
-						state.auto.chargeStation === "off"
-							? 0
-							: state.auto.chargeStation === "on"
-							? 1
-							: state.auto.chargeStation === "charged"
-							? 2
-							: undefined
-					}
-					options={["Off", "On", "Charged"]}
-					label="Charge Station (Balance Board)"
-				/> 	
 				<NumberUpDown
 					setState={(s) =>
 						setState({
@@ -161,7 +140,6 @@ export default function Match(): JSX.Element {
 					state={state.auto.cubePickedUp}
 					label="Picked up Cube (auto)"
 				/>
-			
 				<NumberUpDown
 					setState={(s) =>
 						setState({
@@ -212,6 +190,30 @@ export default function Match(): JSX.Element {
 					state={state.auto.highConeScored}
 					label="Cones scored in High Goal (auto)"
 				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							auto: {
+								...state.auto,
+								autoChargeStation: ["off", "on", "charged"][
+									s ?? 0
+								] as "off" | "on" | "charged",
+							},
+						})
+					}
+					state={
+						state.auto.autoChargeStation === "off"
+							? 0
+							: state.auto.autoChargeStation === "on"
+							? 1
+							: state.auto.autoChargeStation === "charged"
+							? 2
+							: undefined
+					}
+					options={["Off", "On", "Charged"]}
+					label="Auto Charge Station (Balance)"
+				/> 	
 			</div>
 			<h1>Teleop</h1>
 			<div className="inner">
@@ -287,38 +289,30 @@ export default function Match(): JSX.Element {
 					state={state.teleop.highConeScored}
 					label="Cones scored in High Goal (teleop)"
 				/>
-				<Switch
-					setState={(s) =>
-						setState({
-							...state,
-							teleop: { ...state.teleop, parked: s },
-						})
-					}
-					state={state.teleop.parked}
-					label="Parked (Within tape)"
-				/>
 				<Choice
 					setState={(s) =>
 						setState({
 							...state,
 							teleop: {
 								...state.teleop,
-								chargeStation: ["off", "on", "charged"][
+								teleopChargeStation: ["off", "parked", "on", "charged"][
 									s ?? 0
-								] as "off" | "on" | "charged",
+								] as "off" | "parked" | "on" | "charged",
 							},
 						})
 					}
 					state={
-						state.teleop.chargeStation === "off"
+						state.teleop.teleopChargeStation === "off"
 							? 0
-							: state.teleop.chargeStation === "on"
+							: state.teleop.teleopChargeStation === "parked"
 							? 1
-							: state.teleop.chargeStation === "charged"
+							: state.teleop.teleopChargeStation === "on"
 							? 2
+							: state.teleop.teleopChargeStation === "charged"
+							? 3
 							: undefined
 					}
-					options={["Off", "On", "Charged"]}
+					options={["Off", "Parked", "On", "Charged"]}
 					label="Charge Station (Balance Board) (Teleop final park)"
 				/> 
 			</div>

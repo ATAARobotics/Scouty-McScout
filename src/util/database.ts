@@ -1,5 +1,6 @@
 export type MatchType = "qualification" | "practice";
-
+// Make sure the information in this file lines up with the lib file in automated scout!
+// Pit scouting data ranges
 export type PickupType = 0 | 1 | 2 | 3;
 export type FloorPickupRange = 0 | 1 | 2 | 3;
 export type HumanPickupRange = 0 | 1 | 2 | 3;
@@ -8,6 +9,7 @@ export type StackRange = 0 | 1 | 2 | 3 | 4;
 export type DriveType = 0 | 1 | 2;
 export type BusinessLevel = 0 | 1 | 2;
 
+// Exporting match information
 export interface MatchInfo {
 	type: "match_info";
 	match: number;
@@ -15,7 +17,7 @@ export interface MatchInfo {
 	team: number;
 	auto: {
 		exitedTarmac: boolean;
-		chargeStation: "off" | "on" | "charged";
+		autoChargeStation: "off" | "on" | "charged";
 		conePickedUp: number;
 		cubePickedUp: number;
 		hybridScored: number;
@@ -32,8 +34,7 @@ export interface MatchInfo {
 		middleConeScored: number;
 		highCubeScored: number;
 		highConeScored: number;
-		parked: boolean;
-		chargeStation: "off" | "on" | "charged";
+		teleopChargeStation: "off" | "parked" | "on" | "charged";
 	};
 	speed: number;
 	stability: number;
@@ -45,6 +46,7 @@ export interface MatchInfo {
 	lastModifiedTime: number;
 }
 
+// Exporting robot information
 export interface RobotInfo {
 	type: "robot_info";
 	scoutingTime: number;
