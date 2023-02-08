@@ -23,6 +23,8 @@ const defaultState: MatchInfo = {
 	auto: {
 		exitedTarmac: false,
 		chargeStation: "off",
+		conePickedUp: 0,
+		cubePickedUp: 0,
 		hybridScored: 0,
 		middleCubeScored: 0,
 		middleConeScored: 0,
@@ -30,6 +32,8 @@ const defaultState: MatchInfo = {
 		highConeScored: 0,
 	},
 	teleop: {
+		conePickedUp: 0,
+		cubePickedUp: 0,
 		hybridScored: 0,
 		middleCubeScored: 0,
 		middleConeScored: 0,
@@ -136,10 +140,28 @@ export default function Match(): JSX.Element {
 					}
 					options={["Off", "On", "Charged"]}
 					label="Charge Station (Balance Board)"
-				/> 
-				
-			</div>
-			<div className="inner">
+				/> 	
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, conePickedUp: s },
+						})
+					}
+					state={state.auto.conePickedUp}
+					label="Picked up Cone (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, cubePickedUp: s },
+						})
+					}
+					state={state.auto.cubePickedUp}
+					label="Picked up Cube (auto)"
+				/>
+			
 				<NumberUpDown
 					setState={(s) =>
 						setState({
@@ -193,6 +215,28 @@ export default function Match(): JSX.Element {
 			</div>
 			<h1>Teleop</h1>
 			<div className="inner">
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							teleop: { ...state.teleop, conePickedUp: s },
+						})
+					}
+					state={state.teleop.conePickedUp}
+					label="Picked up Cone (teleop)"
+				/>
+				
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							teleop: { ...state.teleop, cubePickedUp: s },
+						})
+					}
+					state={state.teleop.cubePickedUp}
+					label="Picked up Cube (teleop)"
+				/>
+			
 				<NumberUpDown
 					setState={(s) =>
 						setState({

@@ -7,6 +7,9 @@ import NumberUpDown from "../components/NumberUpDown";
 
 import {
 	RobotInfo,
+	PickupType,
+	FloorPickupRange,
+	HumanPickupRange,
 	StackType,
 	StackRange,
 	BusinessLevel,
@@ -33,6 +36,9 @@ const defaultState: RobotInfo = {
 		comments: "",
 	},
 	robot: {
+		pickupType: undefined,
+		floorPickupRange: undefined,
+		humanPickupRange: undefined,
 		stackType: undefined,
 		stackRange: undefined,
 		driveType: undefined,
@@ -153,13 +159,13 @@ export default function Pit(): JSX.Element {
 					<li>
 						<input id="cb-2" type="checkbox" />
 						<label htmlFor="cb-2">
-							What gamepieces can your robot pick up?
+							What gamepieces can your robot pick up and from where?
 						</label>
 					</li>
 					<li>
 						<input id="cb-3" type="checkbox" />
 						<label htmlFor="cb-3">
-							What levels can you score on?
+							What levels can you score on and which game pieces?
 						</label>
 					</li>
 					<li>
@@ -253,6 +259,39 @@ export default function Pit(): JSX.Element {
 			/>
 			<h1>Bot</h1>
 			<div className="inner">
+			<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, pickupType: s as PickupType },
+						})
+					}
+					state={state.robot.pickupType}
+					options={["None", "Cones Only", "Cubes Only", "Both"]}
+					label="Pickup Type"
+				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, floorPickupRange: s as FloorPickupRange },
+						})
+					}
+					state={state.robot.floorPickupRange}
+					options={["None", "Elsewhere", "Hybrid", "Both"]}
+					label="Floor Pickup Range"
+				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, humanPickupRange: s as HumanPickupRange },
+						})
+					}
+					state={state.robot.humanPickupRange}
+					options={["None", "Chute", "Slide Shelf", "Both"]}
+					label="Human Player Pickup Range"
+				/>
 			<Choice
 					setState={(s) =>
 						setState({

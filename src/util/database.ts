@@ -1,5 +1,8 @@
 export type MatchType = "qualification" | "practice";
 
+export type PickupType = 0 | 1 | 2 | 3;
+export type FloorPickupRange = 0 | 1 | 2 | 3;
+export type HumanPickupRange = 0 | 1 | 2 | 3;
 export type StackType = 0 | 1 | 2 | 3;
 export type StackRange = 0 | 1 | 2 | 3 | 4;
 export type DriveType = 0 | 1 | 2;
@@ -13,6 +16,8 @@ export interface MatchInfo {
 	auto: {
 		exitedTarmac: boolean;
 		chargeStation: "off" | "on" | "charged";
+		conePickedUp: number;
+		cubePickedUp: number;
 		hybridScored: number;
 		middleCubeScored: number;
 		middleConeScored: number;
@@ -20,6 +25,8 @@ export interface MatchInfo {
 		highConeScored: number;
 	};
 	teleop: {
+		conePickedUp: number;
+		cubePickedUp: number;
 		hybridScored: number;
 		middleCubeScored: number;
 		middleConeScored: number;
@@ -50,6 +57,9 @@ export interface RobotInfo {
 		comments: string;
 	};
 	robot: {
+		pickupType: PickupType | undefined;
+		floorPickupRange: FloorPickupRange | undefined;
+		humanPickupRange: HumanPickupRange | undefined;
 		stackType: StackType | undefined;
 		stackRange: StackRange | undefined;
 		driveType: DriveType | undefined;
