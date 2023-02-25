@@ -4,57 +4,56 @@ import TextBox from "../components/TextBox";
 import Choice from "../components/Choice";
 import Switch from "../components/Switch";
 import NumberUpDown from "../components/NumberUpDown";
-
+// This is for match data
 import {
 	MatchInfo,
 	MatchType,
-	ClimbLevel,
-	ShooterPositions,
 	readMatch,
 	writeMatch,
 } from "../util/database";
 
-/**
- *
+/*
+Things to add:
+Someone on team balanced (get from blue alliance?)
  */
+// Decide the default state of the buttons
 const defaultState: MatchInfo = {
 	type: "match_info",
 	match: 0,
 	matchCategory: "qualification",
 	team: 0,
 	auto: {
-		preloadedCargo: false,
 		exitedTarmac: false,
-		startingLocation: "middle",
-		cellsAcquired: 0,
-		lowGoalAttempts: 0,
-		lowGoalShots: 0,
-		highGoalAttempts: 0,
-		highGoalShots: 0,
+		autoChargeStation: "off",
+		conePickedUp: 0,
+		cubePickedUp: 0,
+		hybridScored: 0,
+		middleCubeScored: 0,
+		middleConeScored: 0,
+		highCubeScored: 0,
+		highConeScored: 0,
 	},
 	teleop: {
-		cellsAcquired: 0,
-		lowGoalAttempts: 0,
-		lowGoalShots: 0,
-		highGoalAttempts: 0,
-		highGoalShots: 0,
+		conePickedUp: 0,
+		cubePickedUp: 0,
+		hybridScored: 0,
+		middleCubeScored: 0,
+		middleConeScored: 0,
+		highCubeScored: 0,
+		highConeScored: 0,
+		teleopChargeStation: "off",
 	},
-	climb: {
-		startedBeforeEndgame: false,
-		highestAttempted: 0,
-		highestScored: 0,
-		fell: false,
-	},
+	
 	speed: 2,
 	stability: 2,
 	defence: undefined,
 	isPrimaryDefence: false,
-	shooterPositions: 0,
 	wasBroken: false,
 	wasDisabled: false,
 	notes: "",
 	lastModifiedTime: 0,
 };
+// Require that match category, match number and team number are filled in to continue
 export default function Match(): JSX.Element {
 	const [matchCategory, setMatchCategory] = React.useState<MatchType>();
 	const [matchNumber, setMatchNumber] = React.useState<number>();
@@ -101,6 +100,7 @@ export default function Match(): JSX.Element {
 		});
 	}, [state]);
 
+	// This displays the information on the website, anything put in this constructor will show (including comments)
 	const choices = (
 		<>
 			<h1>
@@ -120,92 +120,100 @@ export default function Match(): JSX.Element {
 					state={state.auto.exitedTarmac}
 					label="Exited Tarmac (Tape in the Center)"
 				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, conePickedUp: s },
+						})
+					}
+					state={state.auto.conePickedUp}
+					label="Picked up Cone (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, cubePickedUp: s },
+						})
+					}
+					state={state.auto.cubePickedUp}
+					label="Picked up Cube (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, hybridScored: s },
+						})
+					}
+					state={state.auto.hybridScored}
+					label="Scored in Low Goal (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, middleCubeScored: s },
+						})
+					}
+					state={state.auto.middleCubeScored}
+					label="Cubes Scored in Middle Goal (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, middleConeScored: s },
+						})
+					}
+					state={state.auto.middleConeScored}
+					label="Cones Scored in Middle Goal (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, highCubeScored: s },
+						})
+					}
+					state={state.auto.highCubeScored}
+					label="Cubes scored in High Goal (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, highConeScored: s },
+						})
+					}
+					state={state.auto.highConeScored}
+					label="Cones scored in High Goal (auto)"
+				/>
 				<Choice
 					setState={(s) =>
 						setState({
 							...state,
 							auto: {
 								...state.auto,
-								startingLocation: ["left", "middle", "right"][
+								autoChargeStation: ["off", "on", "charged"][
 									s ?? 0
-								] as "left" | "middle" | "right",
+								] as "off" | "on" | "charged",
 							},
 						})
 					}
 					state={
-						state.auto.startingLocation === "left"
+						state.auto.autoChargeStation === "off"
 							? 0
-							: state.auto.startingLocation === "middle"
+							: state.auto.autoChargeStation === "on"
 							? 1
-							: state.auto.startingLocation === "right"
+							: state.auto.autoChargeStation === "charged"
 							? 2
 							: undefined
 					}
-					options={["Left", "Middle", "Right"]}
-					label="Starting Location"
-				/>
-			</div>
-			<div className="inner">
-				<Switch
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, preloadedCargo: s },
-						})
-					}
-					state={state.auto.preloadedCargo}
-					label="Started with ball"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, cellsAcquired: s },
-						})
-					}
-					state={state.auto.cellsAcquired}
-					label="Cells Picked Up (auto)"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, lowGoalAttempts: s },
-						})
-					}
-					state={state.auto.lowGoalAttempts}
-					label="Balls Shot at Low Goal (auto)"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, lowGoalShots: s },
-						})
-					}
-					state={state.auto.lowGoalShots}
-					label="Balls Landed in Low Goal (auto)"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, highGoalAttempts: s },
-						})
-					}
-					state={state.auto.highGoalAttempts}
-					label="Balls Shot at High Goal (auto)"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, highGoalShots: s },
-						})
-					}
-					state={state.auto.highGoalShots}
-					label="Balls Landed in High Goal (auto)"
-				/>
+					options={["Off", "On", "Charged"]}
+					label="Auto Charge Station (Balance)"
+				/> 	
 			</div>
 			<h1>Teleop</h1>
 			<div className="inner">
@@ -213,100 +221,100 @@ export default function Match(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, cellsAcquired: s },
+							teleop: { ...state.teleop, conePickedUp: s },
 						})
 					}
-					state={state.teleop.cellsAcquired}
-					label="Cells Picked Up (teleop)"
+					state={state.teleop.conePickedUp}
+					label="Picked up Cone (teleop)"
+				/>
+				
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							teleop: { ...state.teleop, cubePickedUp: s },
+						})
+					}
+					state={state.teleop.cubePickedUp}
+					label="Picked up Cube (teleop)"
+				/>
+			
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							teleop: { ...state.teleop, hybridScored: s },
+						})
+					}
+					state={state.teleop.hybridScored}
+					label="Scored in Low Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, lowGoalAttempts: s },
+							teleop: { ...state.teleop, middleCubeScored: s },
 						})
 					}
-					state={state.teleop.lowGoalAttempts}
-					label="Balls Shot at Low Goal (teleop)"
+					state={state.teleop.middleCubeScored}
+					label="Cubes scored in Medium Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, lowGoalShots: s },
+							teleop: { ...state.teleop, middleConeScored: s },
 						})
 					}
-					state={state.teleop.lowGoalShots}
-					label="Balls Landed in Low Goal (teleop)"
+					state={state.teleop.middleConeScored}
+					label="Cones scored in Medium Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, highGoalAttempts: s },
+							teleop: { ...state.teleop, highCubeScored: s },
 						})
 					}
-					state={state.teleop.highGoalAttempts}
-					label="Balls Shot at High Goal (teleop)"
+					state={state.teleop.highCubeScored}
+					label="Cubes scored in High Goal (teleop)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, highGoalShots: s },
+							teleop: { ...state.teleop, highConeScored: s },
 						})
 					}
-					state={state.teleop.highGoalShots}
-					label="Balls Landed in High Goal (teleop)"
-				/>
-			</div>
-			<h1>Climb</h1>
-			<div className="inner">
-				<Switch
-					setState={(s) =>
-						setState({
-							...state,
-							climb: { ...state.climb, startedBeforeEndgame: s },
-						})
-					}
-					state={state.climb.startedBeforeEndgame}
-					label="Started Before Endgame"
+					state={state.teleop.highConeScored}
+					label="Cones scored in High Goal (teleop)"
 				/>
 				<Choice
 					setState={(s) =>
 						setState({
 							...state,
-							climb: {
-								...state.climb,
-								highestAttempted: (s || 0) as ClimbLevel,
+							teleop: {
+								...state.teleop,
+								teleopChargeStation: ["off", "parked", "on", "charged"][
+									s ?? 0
+								] as "off" | "parked" | "on" | "charged",
 							},
 						})
 					}
-					state={state.climb.highestAttempted}
-					options={["None", "Low", "Medium", "High", "Traversal"]}
-					label="Highest Level Attempted"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							climb: {
-								...state.climb,
-								highestScored: (s || 0) as ClimbLevel,
-							},
-						})
+					state={
+						state.teleop.teleopChargeStation === "off"
+							? 0
+							: state.teleop.teleopChargeStation === "parked"
+							? 1
+							: state.teleop.teleopChargeStation === "on"
+							? 2
+							: state.teleop.teleopChargeStation === "charged"
+							? 3
+							: undefined
 					}
-					state={state.climb.highestScored}
-					options={["None", "Low", "Medium", "High", "Traversal"]}
-					label="Highest Level Scored"
-				/>
-				<Switch
-					setState={(s) =>
-						setState({ ...state, climb: { ...state.climb, fell: s } })
-					}
-					state={state.climb.fell}
-					label="Fell Down"
-				/>
+					options={["Off", "Parked", "On", "Charged"]}
+					label="Charge Station (Balance Board) (Teleop final park)"
+				/> 
 			</div>
 			<h1>Ratings</h1>
 			<div className="inner">
@@ -338,17 +346,7 @@ export default function Match(): JSX.Element {
 					options={["None", "1", "2", "3", "4", "5"]}
 					label="Defence"
 				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							shooterPositions: (s ?? 0) as ShooterPositions,
-						})
-					}
-					state={state.shooterPositions}
-					options={["N/A", "At Hub", "Out of Tarmac", "Both"]}
-					label="Shooter Range"
-				/>
+				
 				<Switch
 					setState={(s) => setState({ ...state, wasBroken: s })}
 					state={state.wasBroken}

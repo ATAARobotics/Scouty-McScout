@@ -1,51 +1,52 @@
 export type MatchType = "qualification" | "practice";
-
-export type ClimbLevel = 0 | 1 | 2 | 3 | 4;
-export type ShooterPositions = 0 | 1 | 2 | 3;
-export type BusinessLevel = 0 | 1 | 2;
-export type BallCapacity = 0 | 1 | 2;
-export type ShooterCapability = 0 | 1 | 2 | 3;
+// Make sure the information in this file lines up with the lib file in automated scout!
+// Pit scouting data ranges
+export type PickupType = 0 | 1 | 2 | 3;
+export type FloorPickupRange = 0 | 1 | 2 | 3;
+export type HumanPickupRange = 0 | 1 | 2 | 3;
+export type StackType = 0 | 1 | 2 | 3;
+export type StackRange = 0 | 1 | 2 | 3 | 4;
 export type DriveType = 0 | 1 | 2;
+export type BusinessLevel = 0 | 1 | 2;
 
+// Exporting match information
 export interface MatchInfo {
 	type: "match_info";
 	match: number;
 	matchCategory: MatchType;
 	team: number;
 	auto: {
-		preloadedCargo: boolean;
 		exitedTarmac: boolean;
-		startingLocation: "left" | "middle" | "right";
-		cellsAcquired: number;
-		lowGoalAttempts: number;
-		lowGoalShots: number;
-		highGoalAttempts: number;
-		highGoalShots: number;
+		autoChargeStation: "off" | "on" | "charged";
+		conePickedUp: number;
+		cubePickedUp: number;
+		hybridScored: number;
+		middleCubeScored: number;
+		middleConeScored: number;
+		highCubeScored: number;
+		highConeScored: number;
 	};
 	teleop: {
-		cellsAcquired: number;
-		lowGoalAttempts: number;
-		lowGoalShots: number;
-		highGoalAttempts: number;
-		highGoalShots: number;
-	};
-	climb: {
-		startedBeforeEndgame: boolean;
-		highestAttempted: ClimbLevel;
-		highestScored: ClimbLevel;
-		fell: boolean;
+		conePickedUp: number;
+		cubePickedUp: number;
+		hybridScored: number;
+		middleCubeScored: number;
+		middleConeScored: number;
+		highCubeScored: number;
+		highConeScored: number;
+		teleopChargeStation: "off" | "parked" | "on" | "charged";
 	};
 	speed: number;
 	stability: number;
 	defence: number | undefined;
 	isPrimaryDefence: boolean;
-	shooterPositions: ShooterPositions;
 	wasBroken: boolean;
 	wasDisabled: boolean;
 	notes: string;
 	lastModifiedTime: number;
 }
 
+// Exporting robot information
 export interface RobotInfo {
 	type: "robot_info";
 	scoutingTime: number;
@@ -58,14 +59,14 @@ export interface RobotInfo {
 		comments: string;
 	};
 	robot: {
-		autoBallCount: number | undefined;
-		ballCapacity: BallCapacity | undefined;
-		climbTime: number | undefined;
-		climbHeight: ClimbLevel | undefined;
-		climbEverybot: boolean | undefined;
-		shooterCapability: ShooterCapability | undefined;
-		shooterRange: ShooterPositions | undefined;
+		pickupType: PickupType | undefined;
+		floorPickupRange: FloorPickupRange | undefined;
+		humanPickupRange: HumanPickupRange | undefined;
+		stackType: StackType | undefined;
+		stackRange: StackRange | undefined;
 		driveType: DriveType | undefined;
+		balanceTime: number | undefined;
+		everybot: boolean | undefined;
 		comments: string;
 	};
 	images: string[];

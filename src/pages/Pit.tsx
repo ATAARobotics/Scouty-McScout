@@ -4,27 +4,29 @@ import TextBox from "../components/TextBox";
 import Choice from "../components/Choice";
 import Switch from "../components/Switch";
 import NumberUpDown from "../components/NumberUpDown";
-
+// This file is for pit scouting.
+// Imports from database file
 import {
 	RobotInfo,
-	ClimbLevel,
-	ShooterPositions,
+	PickupType,
+	FloorPickupRange,
+	HumanPickupRange,
+	StackType,
+	StackRange,
 	BusinessLevel,
-	BallCapacity,
-	ShooterCapability,
 	DriveType,
 	writeRobot,
 	readRobot,
 } from "../util/database";
 
+// Add an instruction to ask another team here
 const perTeamInstructions: { [team: number]: string[] } = {
 	[4421]: [
-		"This is a specific instruction for our team",
-		"This is another one",
-		"Don't scout ourselves!",
+		"Scouting ourselves, be friendly!"
 	],
 };
 
+// Decide the default state for the buttons
 const defaultState: RobotInfo = {
 	type: "robot_info",
 	scoutingTime: 0,
@@ -33,18 +35,18 @@ const defaultState: RobotInfo = {
 		busy: undefined,
 		pitPeople: undefined,
 		chaos: undefined,
-		friendly: undefined,
+		friendly: true,
 		comments: "",
 	},
 	robot: {
-		autoBallCount: undefined,
-		ballCapacity: undefined,
-		climbTime: undefined,
-		climbHeight: undefined,
-		climbEverybot: undefined,
-		shooterCapability: undefined,
-		shooterRange: undefined,
+		pickupType: undefined,
+		floorPickupRange: undefined,
+		humanPickupRange: undefined,
+		stackType: undefined,
+		stackRange: undefined,
 		driveType: undefined,
+		balanceTime: undefined,
+		everybot: undefined,
 		comments: "",
 	},
 	images: [],
@@ -56,6 +58,7 @@ export default function Pit(): JSX.Element {
 	const [teamNumber, setTeamNumber] = React.useState<number>(0);
 	const [state, setStateRaw] = React.useState<RobotInfo>(defaultState);
 
+	// If team hasnt been scouted, override
 	React.useEffect(() => {
 		if (scoutingTime !== undefined && teamNumber !== undefined) {
 			readRobot(scoutingTime, teamNumber).then((match) => {
@@ -91,6 +94,7 @@ export default function Pit(): JSX.Element {
 		});
 	}, [state]);
 
+	// Taking images
 	const saveImage = (
 		image: HTMLImageElement | HTMLVideoElement,
 		imageWidth: number,
@@ -115,8 +119,10 @@ export default function Pit(): JSX.Element {
 			});
 		}
 	};
-
+	// Taking videos
 	const [videoStream, setVideoStream] = React.useState<MediaStream>();
+	// Returns this information on the website, anything put in here including comments will show on the site!
+	// Has checkboxes inside, edit those depending on what we are scouting and what we want to ask
 	return (
 		<div className="outer">
 			<h1>General</h1>
@@ -160,32 +166,56 @@ export default function Pit(): JSX.Element {
 					<li>
 						<input id="cb-2" type="checkbox" />
 						<label htmlFor="cb-2">
-							Can you shoot high goal if so where can you shoot from?
+							What gamepieces can your robot pick up?
 						</label>
 					</li>
 					<li>
 						<input id="cb-3" type="checkbox" />
 						<label htmlFor="cb-3">
-							How high can you climb and how long do you need to climb?
+							Can your robot pick up from the floor, and specifically the hybrid module?
 						</label>
 					</li>
 					<li>
 						<input id="cb-4" type="checkbox" />
 						<label htmlFor="cb-4">
-							How many balls can you score in auto?
+							Which driver station dispensers can your robot pick up from?
+						</label>
+					</li>
+					<li>
+						<input id="cb-5" type="checkbox" />
+						<label htmlFor="cb-5">
+							What game pieces can you score?
+						</label>
+					</li>
+					<li>
+						<input id="cb-6" type="checkbox" />
+						<label htmlFor="cb-6">
+							What levels can you stack on?
+						</label>
+					</li>
+					<li>
+						<input id="cb-7" type="checkbox" />
+						<label htmlFor="cb-7">
+							How long does it take for you to balance?
+						</label>
+					</li>
+					<li>
+						<input id="cb-8" type="checkbox" />
+						<label htmlFor="cb-8">
+							Whats your drive train?
 						</label>
 					</li>
 					{(perTeamInstructions[teamNumber] ?? []).map(
 						(name: string, i: number) => (
 							<li key={name}>
-								<input id={`cb-5-${i}`} type="checkbox" />
-								<label htmlFor={`cb-5-${i}`}>{name}</label>
+								<input id={`cb-9-${i}`} type="checkbox" />
+								<label htmlFor={`cb-9-${i}`}>{name}</label>
 							</li>
 						),
 					)}
 					<li>
-						<input id="cb-6" type="checkbox" />
-						<label htmlFor="cb-6">
+						<input id="cb-10" type="checkbox" />
+						<label htmlFor="cb-10">
 							Can we take pictures of your robot?
 						</label>
 					</li>
@@ -254,85 +284,80 @@ export default function Pit(): JSX.Element {
 			/>
 			<h1>Bot</h1>
 			<div className="inner">
-				<NumberUpDown
+			<Choice
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, autoBallCount: s },
+							robot: { ...state.robot, pickupType: s as PickupType },
 						})
 					}
-					state={state.robot.autoBallCount}
-					label="Auto Ball Count"
+					state={state.robot.pickupType}
+					options={["None", "Cones Only", "Cubes Only", "Both"]}
+					label="Pickup Type"
 				/>
 				<Choice
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, ballCapacity: s as BallCapacity },
+							robot: { ...state.robot, floorPickupRange: s as FloorPickupRange },
 						})
 					}
-					state={state.robot.ballCapacity}
-					options={["No Shooter", "1", "2"]}
-					label="Ball Capacity"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							robot: { ...state.robot, climbTime: s },
-						})
-					}
-					state={state.robot.climbTime}
-					label="Climb Time (seconds)"
+					state={state.robot.floorPickupRange}
+					options={["None", "Elsewhere", "Hybrid", "Both"]}
+					label="Floor Pickup Range"
 				/>
 				<Choice
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, climbHeight: s as ClimbLevel },
+							robot: { ...state.robot, humanPickupRange: s as HumanPickupRange },
 						})
 					}
-					state={state.robot.climbHeight}
-					options={["None", "Low", "Medium", "High", "Traversal"]}
-					label="Climb Height"
+					state={state.robot.humanPickupRange}
+					options={["None", "Chute", "Slide Shelf", "Both"]}
+					label="Human Player Pickup Range"
+				/>
+			<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, stackType: s as StackType },
+						})
+					}
+					state={state.robot.stackType}
+					options={["None", "Cones Only", "Cubes Only", "Both"]}
+					label="Stacking Type"
+				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, stackRange: s as StackRange },
+						})
+					}
+					state={state.robot.stackRange}
+					options={["None", "Hybrid Only", "Middle", "High", "All"]}
+					label="Stacking Range"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, balanceTime: s },
+						})
+					}
+					state={state.robot.balanceTime}
+					label="Balance Time (seconds)"
 				/>
 				<Switch
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, climbEverybot: s },
+							robot: { ...state.robot, everybot: s },
 						})
 					}
-					state={state.robot.climbEverybot}
-					label="Everybot Hooks"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: {
-								...state.robot,
-								shooterCapability: s as ShooterCapability,
-							},
-						})
-					}
-					state={state.robot.shooterCapability}
-					options={["None", "Low", "High", "Both"]}
-					label="Shooter"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: {
-								...state.robot,
-								shooterRange: s as ShooterPositions,
-							},
-						})
-					}
-					state={state.robot.shooterRange}
-					options={["N/A", "At Hub", "Out of Tarmac", "Both"]}
-					label="Shooter Range"
+					state={state.robot.everybot}
+					label="Everybot"
 				/>
 				<Choice
 					setState={(s) =>

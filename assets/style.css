@@ -1,10 +1,10 @@
 :root {
-	--bg-colour-1: #1d1f20;
+	--bg-colour-1: #1e272e;
 	--bg-colour-2: #e6e6e6;
-	--bg-colour-3: #363b3d;
+	--bg-colour-3: #141b20;
 	--fg-colour-1: #ffffff;
-	--accent-bg: #0a6ab6;
-	--danger: #cc0000;
+	--accent-bg: #3c40c6;
+	--danger: #ff3f34;
 }
 
 body {
@@ -69,14 +69,14 @@ button {
 	border-radius: 0;
 	margin-left: 0;
 	margin-right: 0;
-	background-color: #545b62;
+	background-image: linear-gradient(to bottom, #545b61, #43494e);
 }
 
 .button-unpress {
 	border-radius: 0;
 	margin-left: 0;
 	margin-right: 0;
-	background-color: #6c757d;
+	background-image: linear-gradient(to bottom, #6c757d, #545b62);
 }
 
 .border-right {
@@ -95,11 +95,11 @@ button {
 }
 
 .dec-button {
-	background-color: #ba2511;
+	background-color: #ff3f34;
 }
 
 .inc-button {
-	background-color: #5bba11;
+	background-color: #05c46b;
 }
 
 .header {
@@ -107,7 +107,7 @@ button {
 	flex-direction: row;
 	height: 4rem;
 	background-color: var(--bg-colour-3);
-	overflow-x: scroll;
+	overflow-x: hidden;
 	overflow-y: hidden;
 	scrollbar-width: none;
 }
