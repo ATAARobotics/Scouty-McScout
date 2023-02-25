@@ -41,8 +41,8 @@ const API_ENDPOINTS = [
 	// Local
 	"http://localhost:4421/",
 	// Server McServerface
-	"https://autoscout.ben1jen.ca:4431/",
-	"http://autoscout.ben1jen.ca:4421/",
+	"https://autoscout.vedapowered.ca:4431/",
+	"http://autoscout.vedapowered.ca:4421/",
 ];
 
 export default function Sync(props: HeaderProps): JSX.Element {
