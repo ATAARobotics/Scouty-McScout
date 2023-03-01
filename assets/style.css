@@ -107,7 +107,7 @@ button {
 	flex-direction: row;
 	height: 4rem;
 	background-color: var(--bg-colour-3);
-	overflow-x: hidden;
+	overflow-x: auto;
 	overflow-y: hidden;
 	scrollbar-width: none;
 }
