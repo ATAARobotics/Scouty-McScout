@@ -118,7 +118,7 @@ export default function Match(): JSX.Element {
 						})
 					}
 					state={state.auto.exitedTarmac}
-					label="Exited Tarmac (Tape in the Center)"
+					label="Exited Tarmac (Coloured Tape)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
