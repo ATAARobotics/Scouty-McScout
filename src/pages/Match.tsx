@@ -124,21 +124,21 @@ export default function Match(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							auto: { ...state.auto, conePickedUp: s },
-						})
-					}
-					state={state.auto.conePickedUp}
-					label="Picked up Cone (auto)"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
 							auto: { ...state.auto, cubePickedUp: s },
 						})
 					}
 					state={state.auto.cubePickedUp}
 					label="Picked up Cube (auto)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							auto: { ...state.auto, conePickedUp: s },
+						})
+					}
+					state={state.auto.conePickedUp}
+					label="Picked up Cone (auto)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
