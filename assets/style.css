@@ -150,3 +150,20 @@ textarea {
 	width: 100%;
 	height: 10rem;
 }
+
+.cone button.inc-button {
+	background-color: #c1c405;
+}
+.cube button.inc-button {
+	background-color: #b405c4;
+}
+.low button.dec-button {
+	background-color: #880808;
+}
+.mid button.dec-button {
+	background-color: #D22B2B;
+}
+.high button.dec-button {
+	background-color: #E97451;
+}
+

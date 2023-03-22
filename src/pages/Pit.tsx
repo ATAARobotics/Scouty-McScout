@@ -8,13 +8,10 @@ import NumberUpDown from "../components/NumberUpDown";
 // Imports from database file
 import {
 	RobotInfo,
-	PickupType,
-	FloorPickupRange,
 	HumanPickupRange,
 	StackType,
 	StackRange,
-	BusinessLevel,
-	DriveType,
+	ConfidenceLevel,
 	writeRobot,
 	readRobot,
 } from "../util/database";
@@ -25,28 +22,44 @@ const perTeamInstructions: { [team: number]: string[] } = {
 		"Scouting ourselves, be friendly!"
 	],
 };
+/*To change:
+Remove:
+Doing Stuff  V
+Friendly  V
+Pickup Type V
+Floor pickup range V
+Everybot V
 
+Change:
+Drive train - make it a string V
+
+Add:
+Certainty meter V
+Reversable Bumpers
+Battery Quantity
+No. of drivers
+Are bumpers secure
+Can they charge their batteries
+
+(V means add to Automated Scout)
+*/
 // Decide the default state for the buttons
 const defaultState: RobotInfo = {
 	type: "robot_info",
 	scoutingTime: 0,
 	team: 0,
 	pit: {
-		busy: undefined,
+		confidence: undefined,
 		pitPeople: undefined,
 		chaos: undefined,
-		friendly: true,
 		comments: "",
 	},
 	robot: {
-		pickupType: undefined,
-		floorPickupRange: undefined,
 		humanPickupRange: undefined,
 		stackType: undefined,
 		stackRange: undefined,
-		driveType: undefined,
+		driveType: "Write any key drive train info here: ",
 		balanceTime: undefined,
-		everybot: undefined,
 		comments: "",
 	},
 	images: [],
@@ -121,7 +134,7 @@ export default function Pit(): JSX.Element {
 	};
 	// Taking videos
 	const [videoStream, setVideoStream] = React.useState<MediaStream>();
-	// Returns this information on the website, anything put in here including comments will show on the site!
+	// Returns information on the website, anything put in here including comments will show on the site!
 	// Has checkboxes inside, edit those depending on what we are scouting and what we want to ask
 	return (
 		<div className="outer">
@@ -227,12 +240,12 @@ export default function Pit(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							pit: { ...state.pit, busy: s as BusinessLevel },
+							pit: { ...state.pit, confidence: s as ConfidenceLevel },
 						})
 					}
-					state={state.pit.busy}
-					options={["No", "General", "Repairs"]}
-					label="Doing Stuff"
+					state={state.pit.confidence}
+					options={["Honest about issues", "Unsure on alot", "Generally Anxious", "Uncertain on a few things", "Confident"]}
+					label="Confidence in Answers"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -261,16 +274,6 @@ export default function Pit(): JSX.Element {
 					]}
 					label="Chaos Level"
 				/>
-				<Switch
-					setState={(s) =>
-						setState({
-							...state,
-							pit: { ...state.pit, friendly: s },
-						})
-					}
-					state={state.pit.friendly}
-					label="Friendly"
-				/>
 			</div>
 			<TextBox
 				setState={(s) =>
@@ -284,28 +287,6 @@ export default function Pit(): JSX.Element {
 			/>
 			<h1>Bot</h1>
 			<div className="inner">
-			<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: { ...state.robot, pickupType: s as PickupType },
-						})
-					}
-					state={state.robot.pickupType}
-					options={["None", "Cones Only", "Cubes Only", "Both"]}
-					label="Pickup Type"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: { ...state.robot, floorPickupRange: s as FloorPickupRange },
-						})
-					}
-					state={state.robot.floorPickupRange}
-					options={["None", "Elsewhere", "Hybrid", "Both"]}
-					label="Floor Pickup Range"
-				/>
 				<Choice
 					setState={(s) =>
 						setState({
@@ -349,25 +330,14 @@ export default function Pit(): JSX.Element {
 					state={state.robot.balanceTime}
 					label="Balance Time (seconds)"
 				/>
-				<Switch
+				<TextBox
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, everybot: s },
-						})
-					}
-					state={state.robot.everybot}
-					label="Everybot"
-				/>
-				<Choice
-					setState={(s) =>
-						setState({
-							...state,
-							robot: { ...state.robot, driveType: s as DriveType },
+							robot: { ...state.robot, driveType: s },
 						})
 					}
 					state={state.robot.driveType}
-					options={["Swerve", "Tank", "Other"]}
 					label="Drive Train"
 				/>
 			</div>

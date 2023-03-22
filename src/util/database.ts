@@ -1,13 +1,10 @@
 export type MatchType = "qualification" | "practice";
 // Make sure the information in this file lines up with the lib file in automated scout!
 // Pit scouting data ranges
-export type PickupType = 0 | 1 | 2 | 3;
-export type FloorPickupRange = 0 | 1 | 2 | 3;
 export type HumanPickupRange = 0 | 1 | 2 | 3;
 export type StackType = 0 | 1 | 2 | 3;
 export type StackRange = 0 | 1 | 2 | 3 | 4;
-export type DriveType = 0 | 1 | 2;
-export type BusinessLevel = 0 | 1 | 2;
+export type ConfidenceLevel = 0 | 1 | 2 | 3 | 4;
 
 // Exporting match information
 export interface MatchInfo {
@@ -17,19 +14,21 @@ export interface MatchInfo {
 	team: number;
 	auto: {
 		exitedTarmac: boolean;
-		autoChargeStation: "off" | "on" | "charged";
-		conePickedUp: number;
-		cubePickedUp: number;
-		hybridScored: number;
+		autoChargeStation: "off" | "on" | "charged" | "otherRobot";
+		//conePickedUp: number;
+		//cubePickedUp: number;
+		hybridCubeScored: number;
+		hybridConeScored: number;
 		middleCubeScored: number;
 		middleConeScored: number;
 		highCubeScored: number;
 		highConeScored: number;
 	};
 	teleop: {
-		conePickedUp: number;
-		cubePickedUp: number;
-		hybridScored: number;
+		//conePickedUp: number;
+		//cubePickedUp: number;
+		hybridCubeScored: number;
+		hybridConeScored: number;
 		middleCubeScored: number;
 		middleConeScored: number;
 		highCubeScored: number;
@@ -52,21 +51,17 @@ export interface RobotInfo {
 	scoutingTime: number;
 	team: number;
 	pit: {
-		busy: BusinessLevel | undefined;
+		confidence: ConfidenceLevel | undefined;
 		pitPeople: number | undefined;
 		chaos: number | undefined;
-		friendly: boolean | undefined;
 		comments: string;
 	};
 	robot: {
-		pickupType: PickupType | undefined;
-		floorPickupRange: FloorPickupRange | undefined;
 		humanPickupRange: HumanPickupRange | undefined;
 		stackType: StackType | undefined;
 		stackRange: StackRange | undefined;
-		driveType: DriveType | undefined;
+		driveType: string;
 		balanceTime: number | undefined;
-		everybot: boolean | undefined;
 		comments: string;
 	};
 	images: string[];

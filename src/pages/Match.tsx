@@ -24,19 +24,21 @@ const defaultState: MatchInfo = {
 	team: 0,
 	auto: {
 		exitedTarmac: false,
-		autoChargeStation: "off",
-		conePickedUp: 0,
-		cubePickedUp: 0,
-		hybridScored: 0,
+		autoChargeStation: "otherRobot",
+		//conePickedUp: 0,
+		//cubePickedUp: 0,
+		hybridCubeScored: 0,
+		hybridConeScored: 0,
 		middleCubeScored: 0,
 		middleConeScored: 0,
 		highCubeScored: 0,
 		highConeScored: 0,
 	},
 	teleop: {
-		conePickedUp: 0,
-		cubePickedUp: 0,
-		hybridScored: 0,
+		//conePickedUp: 0,
+		//cubePickedUp: 0,
+		hybridCubeScored: 0,
+		hybridConeScored: 0,
 		middleCubeScored: 0,
 		middleConeScored: 0,
 		highCubeScored: 0,
@@ -124,31 +126,23 @@ export default function Match(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							auto: { ...state.auto, cubePickedUp: s },
+							auto: { ...state.auto, hybridCubeScored: s },
 						})
 					}
-					state={state.auto.cubePickedUp}
-					label="Picked up Cube (auto)"
+					state={state.auto.hybridCubeScored}
+					label="Cubes Scored in Low Goal (auto)"
+					className="cube low"
 				/>
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							auto: { ...state.auto, conePickedUp: s },
+							auto: { ...state.auto, hybridConeScored: s },
 						})
 					}
-					state={state.auto.conePickedUp}
-					label="Picked up Cone (auto)"
-				/>
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							auto: { ...state.auto, hybridScored: s },
-						})
-					}
-					state={state.auto.hybridScored}
-					label="Scored in Low Goal (auto)"
+					state={state.auto.hybridConeScored}
+					label="Cones Scored in Low Goal (auto)"
+					className="cone low"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -159,6 +153,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.auto.middleCubeScored}
 					label="Cubes Scored in Middle Goal (auto)"
+					className="cube mid"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -169,6 +164,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.auto.middleConeScored}
 					label="Cones Scored in Middle Goal (auto)"
+					className="cone mid"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -179,6 +175,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.auto.highCubeScored}
 					label="Cubes scored in High Goal (auto)"
+					className="cube high"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -189,6 +186,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.auto.highConeScored}
 					label="Cones scored in High Goal (auto)"
+					className="cone high"
 				/>
 				<Choice
 					setState={(s) =>
@@ -196,58 +194,51 @@ export default function Match(): JSX.Element {
 							...state,
 							auto: {
 								...state.auto,
-								autoChargeStation: ["off", "on", "charged"][
+								autoChargeStation: ["otherRobot", "off", "on", "charged"][
 									s ?? 0
-								] as "off" | "on" | "charged",
+								] as "off" | "on" | "charged" | "otherRobot",
 							},
 						})
 					}
 					state={
-						state.auto.autoChargeStation === "off"
+						state.auto.autoChargeStation === "otherRobot"
 							? 0
-							: state.auto.autoChargeStation === "on"
+							: state.auto.autoChargeStation === "off"
 							? 1
-							: state.auto.autoChargeStation === "charged"
+							: state.auto.autoChargeStation === "on"
 							? 2
+							: state.auto.autoChargeStation === "charged"
+							? 3
 							: undefined
 					}
-					options={["Off", "On", "Charged"]}
+					options={["Didn't Attempt", "Off", "On", "Charged"]}
 					label="Auto Charge Station (Balance)"
 				/> 	
 			</div>
 			<h1>Teleop</h1>
 			<div className="inner">
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							teleop: { ...state.teleop, conePickedUp: s },
-						})
-					}
-					state={state.teleop.conePickedUp}
-					label="Picked up Cone (teleop)"
-				/>
-				
-				<NumberUpDown
-					setState={(s) =>
-						setState({
-							...state,
-							teleop: { ...state.teleop, cubePickedUp: s },
-						})
-					}
-					state={state.teleop.cubePickedUp}
-					label="Picked up Cube (teleop)"
-				/>
 			
 				<NumberUpDown
 					setState={(s) =>
 						setState({
 							...state,
-							teleop: { ...state.teleop, hybridScored: s },
+							teleop: { ...state.teleop, hybridCubeScored: s },
 						})
 					}
-					state={state.teleop.hybridScored}
-					label="Scored in Low Goal (teleop)"
+					state={state.teleop.hybridCubeScored}
+					label="Cube Scored in Low Goal (teleop)"
+					className="cube low"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							teleop: { ...state.teleop, hybridConeScored: s },
+						})
+					}
+					state={state.teleop.hybridConeScored}
+					label="Cone Scored in Low Goal (teleop)"
+					className="cone low"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -258,6 +249,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.teleop.middleCubeScored}
 					label="Cubes scored in Medium Goal (teleop)"
+					className="cube mid"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -268,6 +260,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.teleop.middleConeScored}
 					label="Cones scored in Medium Goal (teleop)"
+					className="cone mid"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -278,6 +271,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.teleop.highCubeScored}
 					label="Cubes scored in High Goal (teleop)"
+					className="cube high"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -288,6 +282,7 @@ export default function Match(): JSX.Element {
 					}
 					state={state.teleop.highConeScored}
 					label="Cones scored in High Goal (teleop)"
+					className="cone high"
 				/>
 				<Choice
 					setState={(s) =>

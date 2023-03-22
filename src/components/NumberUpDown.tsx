@@ -4,6 +4,7 @@ interface NumberUpDownProps {
 	label: string;
 	setState?: (state: number) => void;
 	state?: number;
+	className?: string;
 }
 
 /**
@@ -21,7 +22,7 @@ export default function NumberUpDown(props: NumberUpDownProps): JSX.Element {
 	return (
 		<div>
 			<p>{props.label}</p>
-			<div>
+			<div className={props.className}>
 				<button
 					className="dec-button"
 					onClick={() => setValue(Math.max(actualValue - 1, 0))}
