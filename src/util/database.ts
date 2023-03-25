@@ -3,8 +3,12 @@ export type MatchType = "qualification" | "practice";
 // Pit scouting data ranges
 export type HumanPickupRange = 0 | 1 | 2 | 3;
 export type StackType = 0 | 1 | 2 | 3;
-export type StackRange = 0 | 1 | 2 | 3 | 4;
 export type ConfidenceLevel = 0 | 1 | 2 | 3 | 4;
+export type BumperType = 0 | 1 | 2;
+export type VisionType = 0 | 1 | 2 | 3;
+export type PreferredStack = 0 | 1 | 2 | 3;
+export type PreferredPlay = 0 | 1 | 2 | 3;
+export type ChargeBattery = 0 | 1;
 
 // Exporting match information
 export interface MatchInfo {
@@ -51,17 +55,25 @@ export interface RobotInfo {
 	scoutingTime: number;
 	team: number;
 	pit: {
-		confidence: ConfidenceLevel | undefined;
+		confidenceLevel: ConfidenceLevel | undefined;
 		pitPeople: number | undefined;
 		chaos: number | undefined;
-		comments: string;
+		scoutingMethod: string;
 	};
 	robot: {
+		bumperType: BumperType | undefined;
+		visionType: VisionType | undefined;
 		humanPickupRange: HumanPickupRange | undefined;
 		stackType: StackType | undefined;
-		stackRange: StackRange | undefined;
+		preferredStack: PreferredStack | undefined;
+		preferredPlay: PreferredPlay | undefined
 		driveType: string;
+		driveMotorAmount: number | undefined;
+		otherMotorAmount: number | undefined;
 		balanceTime: number | undefined;
+		chargeBattery: ChargeBattery | undefined;
+		batteryAmount: number | undefined;
+		autoSettings: string;
 		comments: string;
 	};
 	images: string[];

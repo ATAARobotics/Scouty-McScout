@@ -10,10 +10,14 @@ import {
 	RobotInfo,
 	HumanPickupRange,
 	StackType,
-	StackRange,
+	PreferredStack,
+	PreferredPlay,
 	ConfidenceLevel,
 	writeRobot,
 	readRobot,
+	BumperType,
+	VisionType,
+	ChargeBattery,
 } from "../util/database";
 
 // Add an instruction to ask another team here
@@ -35,11 +39,16 @@ Drive train - make it a string V
 
 Add:
 Certainty meter V
-Reversable Bumpers
-Battery Quantity
-No. of drivers
-Are bumpers secure
-Can they charge their batteries
+Reversable Bumpers (bumper type) V
+Battery Quantity V
+Can they charge their batteries V
+Amount of motors (drive) V
+Amount of motors (other) V
+Scouting method V
+Auto settings V
+Able to read Tape/AprilTags V
+Prefer to play defence or offence V
+Prefer to play high middle or low V
 
 (V means add to Automated Scout)
 */
@@ -49,17 +58,25 @@ const defaultState: RobotInfo = {
 	scoutingTime: 0,
 	team: 0,
 	pit: {
-		confidence: undefined,
+		confidenceLevel: undefined,
 		pitPeople: undefined,
 		chaos: undefined,
-		comments: "",
+		scoutingMethod: "",
 	},
 	robot: {
+		bumperType: undefined,
+		visionType: undefined,
 		humanPickupRange: undefined,
 		stackType: undefined,
-		stackRange: undefined,
+		preferredStack: undefined,
+		preferredPlay: undefined,
 		driveType: "Write any key drive train info here: ",
+		driveMotorAmount: undefined,
+		otherMotorAmount: undefined,
 		balanceTime: undefined,
+		chargeBattery: undefined,
+		batteryAmount: undefined,
+		autoSettings: "",
 		comments: "",
 	},
 	images: [],
@@ -179,13 +196,13 @@ export default function Pit(): JSX.Element {
 					<li>
 						<input id="cb-2" type="checkbox" />
 						<label htmlFor="cb-2">
-							What gamepieces can your robot pick up?
+							How do you change your bumpers?
 						</label>
 					</li>
 					<li>
 						<input id="cb-3" type="checkbox" />
 						<label htmlFor="cb-3">
-							Can your robot pick up from the floor, and specifically the hybrid module?
+							What can your robot do in terms of vision?
 						</label>
 					</li>
 					<li>
@@ -203,32 +220,68 @@ export default function Pit(): JSX.Element {
 					<li>
 						<input id="cb-6" type="checkbox" />
 						<label htmlFor="cb-6">
-							What levels can you stack on?
+							Where do you prefer to score?
 						</label>
 					</li>
 					<li>
 						<input id="cb-7" type="checkbox" />
 						<label htmlFor="cb-7">
-							How long does it take for you to balance?
+							Do you prefer to play Offence or Defence, and are you fine with playing the other?
 						</label>
 					</li>
 					<li>
 						<input id="cb-8" type="checkbox" />
 						<label htmlFor="cb-8">
-							Whats your drive train?
+							Are you able to charge your batteries?
+						</label>
+					</li>
+					<li>
+						<input id="cb-9" type="checkbox" />
+						<label htmlFor="cb-9">
+							How many batteries do you have?
+						</label>
+					</li>
+					<li>
+						<input id="cb-10" type="checkbox" />
+						<label htmlFor="cb-10">
+							How many motors do you have on your drive train, and how many elsewhere?
+						</label>
+					</li>
+					<li>
+						<input id="cb-11" type="checkbox" />
+						<label htmlFor="cb-11">
+							How long would you estimate it takes to balance?
+						</label>
+					</li>
+					<li>
+						<input id="cb-12" type="checkbox" />
+						<label htmlFor="cb-12">
+							Would you mind telling us about your drive train?
+						</label>
+					</li>
+					<li>
+						<input id="cb-13" type="checkbox" />
+						<label htmlFor="cb-13">
+							Would you mind telling us about your auto capabilities?
+						</label>
+					</li>
+					<li>
+						<input id="cb-14" type="checkbox" />
+						<label htmlFor="cb-14">
+							Would you mind telling us about your scouting method?
 						</label>
 					</li>
 					{(perTeamInstructions[teamNumber] ?? []).map(
 						(name: string, i: number) => (
 							<li key={name}>
-								<input id={`cb-9-${i}`} type="checkbox" />
-								<label htmlFor={`cb-9-${i}`}>{name}</label>
+								<input id={`cb-15-${i}`} type="checkbox" />
+								<label htmlFor={`cb-15-${i}`}>{name}</label>
 							</li>
 						),
 					)}
 					<li>
-						<input id="cb-10" type="checkbox" />
-						<label htmlFor="cb-10">
+						<input id="cb-16" type="checkbox" />
+						<label htmlFor="cb-16">
 							Can we take pictures of your robot?
 						</label>
 					</li>
@@ -240,10 +293,10 @@ export default function Pit(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							pit: { ...state.pit, confidence: s as ConfidenceLevel },
+							pit: { ...state.pit, confidenceLevel: s as ConfidenceLevel },
 						})
 					}
-					state={state.pit.confidence}
+					state={state.pit.confidenceLevel}
 					options={["Honest about issues", "Unsure on alot", "Generally Anxious", "Uncertain on a few things", "Confident"]}
 					label="Confidence in Answers"
 				/>
@@ -275,18 +328,31 @@ export default function Pit(): JSX.Element {
 					label="Chaos Level"
 				/>
 			</div>
-			<TextBox
-				setState={(s) =>
-					setState({
-						...state,
-						pit: { ...state.pit, comments: s },
-					})
-				}
-				state={state.pit.comments}
-				label="Pit/Team Notes and Comments"
-			/>
+			
 			<h1>Bot</h1>
 			<div className="inner">
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, bumperType: s as BumperType },
+						})
+					}
+					state={state.robot.bumperType}
+					options={["Swap Manually", "Reversible", "Other"]}
+					label="Bumper Type"
+				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, visionType: s as VisionType },
+						})
+					}
+					state={state.robot.visionType}
+					options={["None", "Reflective Tape", "April Tags", "Both"]}
+					label="Vision Type"
+				/>
 				<Choice
 					setState={(s) =>
 						setState({
@@ -313,12 +379,64 @@ export default function Pit(): JSX.Element {
 					setState={(s) =>
 						setState({
 							...state,
-							robot: { ...state.robot, stackRange: s as StackRange },
+							robot: { ...state.robot, preferredStack: s as PreferredStack },
 						})
 					}
-					state={state.robot.stackRange}
-					options={["None", "Hybrid Only", "Middle", "High", "All"]}
-					label="Stacking Range"
+					state={state.robot.preferredStack}
+					options={["None", "Hybrid", "Middle", "High"]}
+					label="Preferred Stacking Range"
+				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, preferredPlay: s as PreferredPlay },
+						})
+					}
+					state={state.robot.preferredPlay}
+					options={["Only Defence", "Prefer Defence", "Prefer Offence", "Only Offence"]}
+					label="Preferred Playstyle"
+				/>
+				<Choice
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, chargeBattery: s as ChargeBattery },
+						})
+					}
+					state={state.robot.chargeBattery}
+					options={["Yes", "No"]}
+					label="Able to Charge Batteries"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, batteryAmount: s },
+						})
+					}
+					state={state.robot.batteryAmount}
+					label="Amount of Batteries"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, driveMotorAmount: s },
+						})
+					}
+					state={state.robot.driveMotorAmount}
+					label="Amount of Motors (Drive train)"
+				/>
+				<NumberUpDown
+					setState={(s) =>
+						setState({
+							...state,
+							robot: { ...state.robot, otherMotorAmount: s },
+						})
+					}
+					state={state.robot.otherMotorAmount}
+					label="Amount of Motors (Other)"
 				/>
 				<NumberUpDown
 					setState={(s) =>
@@ -330,7 +448,10 @@ export default function Pit(): JSX.Element {
 					state={state.robot.balanceTime}
 					label="Balance Time (seconds)"
 				/>
-				<TextBox
+				
+				
+			</div>
+			<TextBox
 					setState={(s) =>
 						setState({
 							...state,
@@ -340,7 +461,26 @@ export default function Pit(): JSX.Element {
 					state={state.robot.driveType}
 					label="Drive Train"
 				/>
-			</div>
+			<TextBox
+				setState={(s) =>
+					setState({
+						...state,
+						robot: { ...state.robot, autoSettings: s },
+					})
+				}
+				state={state.robot.autoSettings}
+				label="Auto settings"
+			/>
+			<TextBox
+				setState={(s) =>
+					setState({
+						...state,
+						pit: { ...state.pit, scoutingMethod: s },
+					})
+				}
+				state={state.pit.scoutingMethod}
+				label="How the team does its scouting"
+			/>
 			<TextBox
 				setState={(s) =>
 					setState({
@@ -349,7 +489,7 @@ export default function Pit(): JSX.Element {
 					})
 				}
 				state={state.robot.comments}
-				label="Bot Notes and Comments"
+				label="Bot Notes and Comments (Include any concerns here)"
 			/>
 			<h1>Pictures</h1>
 			<div className="inner">
