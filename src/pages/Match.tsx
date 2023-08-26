@@ -50,7 +50,6 @@ const defaultState: MatchInfo = {
 	stability: 2,
 	defence: undefined,
 	isPrimaryDefence: false,
-	wasBroken: false,
 	wasDisabled: false,
 	notes: "",
 	lastModifiedTime: 0,
@@ -343,14 +342,9 @@ export default function Match(): JSX.Element {
 				/>
 				
 				<Switch
-					setState={(s) => setState({ ...state, wasBroken: s })}
-					state={state.wasBroken}
-					label="Did Anything Break?"
-				/>
-				<Switch
 					setState={(s) => setState({ ...state, wasDisabled: s })}
 					state={state.wasDisabled}
-					label="Robot Died, Disabled, or Disconnected?"
+					label="Robot Broke, Died, Disabled, or Disconnected?"
 				/>
 			</div>
 			<TextBox
