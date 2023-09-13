@@ -13,9 +13,46 @@ import {
 } from "../util/database";
 
 /*
-Things to add:
-Someone on team balanced (get from blue alliance?)
+Add way to clear data easily
+
+List of variables we have:
+Match number
+Match catgory (qual or prac) - make sure prac matches dont influence results
+Team number
+
+All of teleop and auto will have to change likely
+
+Auto:
+Exited the tarmac
+Charge station (includes if a different robot has charge)
+Hybrid cube scored
+Hybrid cone scored
+Middle cube scored
+Middle cone scored
+High cube scored
+High cone scored
+
+Teleop:
+Hybrid cube scored
+Hybrid cone scored
+Middle cube scored
+Middle cone scored
+High cube scored
+High cone scored
+Charge station
+
+Put 3 in own category:
+Speed
+Stability
+Defence
+
+Add ratios for yes to no?:
+Is primarily defence - would be nice if we could mark a bot as defence or not
+Was disabled
+
+Notes - Fix visuals on the automated scout so its easier to read
  */
+
 // Decide the default state of the buttons
 const defaultState: MatchInfo = {
 	type: "match_info",
@@ -49,7 +86,6 @@ const defaultState: MatchInfo = {
 	speed: 2,
 	stability: 2,
 	defence: undefined,
-	isPrimaryDefence: false,
 	wasDisabled: false,
 	notes: "",
 	lastModifiedTime: 0,

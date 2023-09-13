@@ -42,7 +42,6 @@ export interface MatchInfo {
 	speed: number;
 	stability: number;
 	defence: number | undefined;
-	isPrimaryDefence: boolean;
 	wasDisabled: boolean;
 	notes: string;
 	lastModifiedTime: number;
